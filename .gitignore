@@ -76,3 +76,6 @@ build
 .idea
 
 
+.vs
+.vscode
+.xmake 

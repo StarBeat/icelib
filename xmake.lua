@@ -14,7 +14,7 @@ set_optimize("fast")
 add_requires("xnet")
 add_requires("stunlib")
 
-target("ice")
+target("icelib")
     set_kind("shared")
     
     add_packages("xnet")
@@ -27,11 +27,11 @@ target("ice")
       "src/timer.c",
       "src/icelibtypes.c")
 
-target("ice.test.icelib")
+target("icelib.test.icelib")
     set_kind("binary")
     
-    set_group("ice.test")
-    add_deps("ice")
+    set_group("icelib.test")
+    add_deps("icelib")
     add_packages("xnet")
     add_packages("stunlib")
     
@@ -41,12 +41,13 @@ target("ice.test.icelib")
     add_files("test/icelib_test.c")
 target_end()
 
-target("ice.test.icelibtypes")
+target("icelib.test.icelibtypes")
     set_kind("binary")
     
-    set_group("ice.test")
-    add_deps("ice")
+    set_group("icelib.test")
+    add_deps("icelib")
     add_packages("xnet")
+    add_packages("stunlib")
     
     add_includedirs("test")
     add_includedirs("include")
@@ -54,11 +55,11 @@ target("ice.test.icelibtypes")
     add_files("test/icelibtypes_test.c")
 target_end()
 
-target("ice.test.icelib_running")
+target("icelib.test.icelib_running")
     set_kind("binary")
     
-    set_group("ice.test")
-    add_deps("ice")
+    set_group("icelib.test")
+    add_deps("icelib")
     add_packages("xnet")
     add_packages("stunlib")
     
@@ -68,13 +69,13 @@ target("ice.test.icelib_running")
     add_files("test/icelib_running_test.c")
 target_end()
 
-target("ice.test.icelib_ce")
+target("icelib.test.icelib_ce")
     set_kind("binary")
     
-    set_group("ice.test")
+    set_group("icelib.test")
     add_packages("stunlib")
     add_packages("xnet")
-    add_deps("ice")
+    add_deps("icelib")
     
     add_includedirs("test")
     add_includedirs("include")
@@ -82,13 +83,13 @@ target("ice.test.icelib_ce")
     add_files("test/icelib_ce_test.c")
 target_end()
 
-target("ice.test.icelib_nomination")
+target("icelib.test.icelib_nomination")
     set_kind("binary")
     
-    set_group("ice.test")
+    set_group("icelib.test")
     add_packages("stunlib")
     add_packages("xnet")
-    add_deps("ice")
+    add_deps("icelib")
     
     add_includedirs("test")
     add_includedirs("include")
@@ -96,13 +97,13 @@ target("ice.test.icelib_nomination")
     add_files("test/icelib_nomination_test.c")
 target_end()
 
-target("ice.test.icelib_nomination_medialines")
+target("icelib.test.icelib_nomination_medialines")
     set_kind("binary")
     
-    set_group("ice.test")
+    set_group("icelib.test")
     add_packages("stunlib")
     add_packages("xnet")
-    add_deps("ice")
+    add_deps("icelib")
     
     add_includedirs("test")
     add_includedirs("include")
