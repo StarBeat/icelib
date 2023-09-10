@@ -5,7 +5,7 @@
 
 #include "icelib.h"
 
-#include "sockaddr_util.h"
+#include "xnet.h"
 #include "icelib_intern.h"
 
 #include <assert.h>

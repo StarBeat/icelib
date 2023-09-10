@@ -7,7 +7,7 @@
 #ifndef ICELIB_H
 #define ICELIB_H
 
-#include "sockaddr_util.h"
+#include "xnet.h"
 #include "icelibtypes.h"
 
 #include <stdint.h>
