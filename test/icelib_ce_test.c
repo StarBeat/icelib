@@ -550,7 +550,7 @@ CTEST(icelib_ce, create_foundation)
 
 CTEST(icelib_ce, create_localMediaStream)
 {
-  ICELIB_INSTANCE      localIcelib;
+  ICELIB_INSTANCE*      localIcelib;
   ICELIB_CONFIGURATION localIceConfig;
   ICE_MEDIA const*     localIceMedia;
 
@@ -559,40 +559,41 @@ CTEST(icelib_ce, create_localMediaStream)
 
   /* localIceConfig.logLevel = ICELIB_logDebug; */
   localIceConfig.logLevel          = ICELIB_logDisable;
+  // avoid win Stack overflow
   localIceConfig.maxCheckListPairs = ICELIB_MAX_PAIRS;
-
-
-  ICELIB_Constructor(&localIcelib,
+  localIcelib = malloc(sizeof(ICELIB_INSTANCE));
+  
+  ICELIB_Constructor(localIcelib,
                      &localIceConfig);
 
 
   for (i = 0; i < ICE_MAX_MEDIALINES; i++)
   {
-    result = ICELIB_addLocalMediaStream(&localIcelib,
+    result = ICELIB_addLocalMediaStream(localIcelib,
                                         45,
                                         34,
                                         ICE_CAND_TYPE_HOST);
     ASSERT_TRUE( result == i);
 
-    localIceMedia = ICELIB_getLocalIceMedia(&localIcelib);
+    localIceMedia = ICELIB_getLocalIceMedia(localIcelib);
     ASSERT_TRUE( isLegalString(localIceMedia->mediaStream[i].ufrag) );
     ASSERT_TRUE( isLegalString(localIceMedia->mediaStream[i].passwd) );
   }
 
   i++;
-  result = ICELIB_addLocalMediaStream(&localIcelib,
+  result = ICELIB_addLocalMediaStream(localIcelib,
                                       45,
                                       34,
                                       ICE_CAND_TYPE_HOST);
   ASSERT_TRUE(result == -1);
-
+  free(localIcelib);
 }
 
 
 
 CTEST(icelib_ce, create_remoteMediaStream)
 {
-  ICELIB_INSTANCE      remoteIcelib;
+  ICELIB_INSTANCE*      remoteIcelib;
   ICELIB_CONFIGURATION remoteIceConfig;
   struct socket_addr      defaultAddr;
 
@@ -601,18 +602,19 @@ CTEST(icelib_ce, create_remoteMediaStream)
   sockaddr_initFromString( (struct socket_addr*)&defaultAddr,
                            "10.47.2.246:47936" );
 
+  remoteIcelib = malloc(sizeof(ICELIB_INSTANCE));
 
   remoteIceConfig.logLevel = ICELIB_logDisable;
   /* remoteIceConfig.logLevel = ICELIB_logDebug; */
   remoteIceConfig.maxCheckListPairs = ICELIB_MAX_PAIRS;
 
-  ICELIB_Constructor(&remoteIcelib,
+  ICELIB_Constructor(remoteIcelib,
                      &remoteIceConfig);
 
 
   for (i = 0; i < ICE_MAX_MEDIALINES; i++)
   {
-    result = ICELIB_addRemoteMediaStream(&remoteIcelib,
+    result = ICELIB_addRemoteMediaStream(remoteIcelib,
                                          "ufrag",
                                          "pass",
                                          &defaultAddr);
@@ -622,12 +624,12 @@ CTEST(icelib_ce, create_remoteMediaStream)
   }
 
   i++;
-  result = ICELIB_addRemoteMediaStream(&remoteIcelib,
+  result = ICELIB_addRemoteMediaStream(remoteIcelib,
                                        "ufrag",
                                        "pass",
                                        &defaultAddr);
   ASSERT_TRUE(result == -1);
-
+  free(remoteIcelib);
 }
 
 
@@ -927,12 +929,12 @@ CTEST(icelib_ce, triggereedcheck_queue_ekstra)
 CTEST(icelib_ce, ice_timer)
 {
   unsigned int         i;
-  ICELIB_INSTANCE      Instance;
+  ICELIB_INSTANCE*      Instance;
   ICELIB_CONFIGURATION config;
   ICELIB_TIMER         timer0;
   ICELIB_TIMER*        pTimer0 = &timer0;
 
-
+  Instance = malloc(sizeof(ICELIB_INSTANCE));
   memset( &config, 0, sizeof(config) );
 
   config.tickIntervalMS       = 20;         /* Number of ms between timer ticks
@@ -943,7 +945,7 @@ CTEST(icelib_ce, ice_timer)
   config.iceLite              = false;
   config.logLevel             = ICELIB_logDebug;
 
-  ICELIB_Constructor(&Instance, &config);
+  ICELIB_Constructor(Instance, &config);
   ICELIB_timerConstructor(pTimer0, config.tickIntervalMS);
 
   ASSERT_TRUE( !ICELIB_timerIsTimedOut(pTimer0) );
@@ -977,7 +979,7 @@ CTEST(icelib_ce, ice_timer)
   ASSERT_TRUE( !ICELIB_timerIsTimedOut(pTimer0) );
   ICELIB_timerTick(pTimer0);
   ASSERT_TRUE( ICELIB_timerIsTimedOut(pTimer0) );
-
+  free(Instance);
 }
 
 

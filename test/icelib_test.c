@@ -613,52 +613,54 @@ CTEST(icelib, create_foundation)
 
 CTEST(icelib, create_localMediaStream)
 {
-  ICELIB_INSTANCE      localIcelib;
+  ICELIB_INSTANCE*      localIcelib;
   ICELIB_CONFIGURATION localIceConfig;
   ICE_MEDIA const*     localIceMedia;
 
   int32_t mediaIdx,i;
 
-
+  localIcelib = malloc(sizeof(ICELIB_INSTANCE));
   /* localIceConfig.logLevel = ICELIB_logDebug; */
   localIceConfig.logLevel = ICELIB_logDisable;
 
 
-  ICELIB_Constructor(&localIcelib,
+  ICELIB_Constructor(localIcelib,
                      &localIceConfig);
 
 
   for (i = 0; i < ICE_MAX_MEDIALINES; i++)
   {
-    mediaIdx = ICELIB_addLocalMediaStream(&localIcelib,
+    mediaIdx = ICELIB_addLocalMediaStream(localIcelib,
                                           45,
                                           34,
                                           ICE_CAND_TYPE_HOST);
     ASSERT_TRUE( mediaIdx == i);
 
-    localIceMedia = ICELIB_getLocalIceMedia(&localIcelib);
+    localIceMedia = ICELIB_getLocalIceMedia(localIcelib);
     ASSERT_TRUE( isLegalString(localIceMedia->mediaStream[i].ufrag) );
     ASSERT_TRUE( isLegalString(localIceMedia->mediaStream[i].passwd) );
   }
 
   i++;
-  mediaIdx = ICELIB_addLocalMediaStream(&localIcelib,
+  mediaIdx = ICELIB_addLocalMediaStream(localIcelib,
                                         45,
                                         34,
                                         ICE_CAND_TYPE_HOST);
   ASSERT_TRUE(mediaIdx == -1);
 
+  free(localIcelib);
 }
 
 
 
 CTEST(icelib, create_remoteMediaStream)
 {
-  ICELIB_INSTANCE      remoteIcelib;
+  ICELIB_INSTANCE*      remoteIcelib;
   ICELIB_CONFIGURATION remoteIceConfig;
   struct socket_addr      defaultAddr;
 
   int32_t result,i;
+  remoteIcelib = malloc(sizeof(ICELIB_INSTANCE));
 
   sockaddr_initFromString( (struct socket_addr*)&defaultAddr,
                            "10.47.2.246:47936" );
@@ -667,13 +669,13 @@ CTEST(icelib, create_remoteMediaStream)
   remoteIceConfig.logLevel = ICELIB_logDisable;
   /* remoteIceConfig.logLevel = ICELIB_logDebug; */
 
-  ICELIB_Constructor(&remoteIcelib,
+  ICELIB_Constructor(remoteIcelib,
                      &remoteIceConfig);
 
 
   for (i = 0; i < ICE_MAX_MEDIALINES; i++)
   {
-    result = ICELIB_addRemoteMediaStream(&remoteIcelib,
+    result = ICELIB_addRemoteMediaStream(remoteIcelib,
                                          "ufrag",
                                          "pass",
                                          &defaultAddr);
@@ -682,12 +684,12 @@ CTEST(icelib, create_remoteMediaStream)
   }
 
   i++;
-  result = ICELIB_addRemoteMediaStream(&remoteIcelib,
+  result = ICELIB_addRemoteMediaStream(remoteIcelib,
                                        "ufrag",
                                        "pass",
                                        &defaultAddr);
   ASSERT_TRUE(result == -1);
-
+  free(remoteIcelib);
 }
 
 
@@ -984,12 +986,12 @@ CTEST(icelib, triggereedcheck_queue_ekstra)
 CTEST(icelib, ice_timer)
 {
   unsigned int         i;
-  ICELIB_INSTANCE      Instance;
+  ICELIB_INSTANCE*      Instance;
   ICELIB_CONFIGURATION config;
   ICELIB_TIMER         timer0;
   ICELIB_TIMER*        pTimer0 = &timer0;
 
-
+  Instance = malloc(sizeof(ICELIB_INSTANCE));
   memset( &config, 0, sizeof(config) );
 
   config.tickIntervalMS       = 20;         /* Number of ms between timer ticks
@@ -1001,7 +1003,7 @@ CTEST(icelib, ice_timer)
   /* config.logLevel             = 3; */
   config.logLevel = ICELIB_logDebug;
 
-  ICELIB_Constructor(&Instance, &config);
+  ICELIB_Constructor(Instance, &config);
   ICELIB_timerConstructor(pTimer0, config.tickIntervalMS);
 
   ASSERT_TRUE(ICELIB_timerIsTimedOut(pTimer0) == false);
@@ -1035,6 +1037,7 @@ CTEST(icelib, ice_timer)
   ASSERT_TRUE(ICELIB_timerIsTimedOut(pTimer0) == false);
   ICELIB_timerTick(pTimer0);
   ASSERT_TRUE(ICELIB_timerIsTimedOut(pTimer0) == true);
+  free(Instance);
 }
 
 
