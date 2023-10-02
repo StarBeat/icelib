@@ -41,8 +41,8 @@ static char m2_remotePasswd[]        = "rm2Pa";
 
 typedef struct {
   bool                   gotCB;
-  const struct sockaddr* destination;
-  const struct sockaddr* source;
+  const struct socket_addr* destination;
+  const struct socket_addr* source;
   uint32_t               userValue1;
   uint32_t               userValue2;
   uint32_t               componentId;
@@ -75,8 +75,8 @@ ICELIB_Result
 ICELIB_RUNNING_TEST_sendConnectivityCheck(void*                  pUserData,
                                           int                    proto,
                                           int                    socket,
-                                          const struct sockaddr* destination,
-                                          const struct sockaddr* source,
+                                          const struct socket_addr* destination,
+                                          const struct socket_addr* source,
                                           uint32_t               userValue1,
                                           uint32_t               userValue2,
                                           uint32_t               componentId,
@@ -121,29 +121,29 @@ CTEST_DATA(data)
 CTEST_SETUP(data)
 {
   (void)data;
-  struct sockaddr_storage m0_defaultAddr;
-  struct sockaddr_storage m0_localHostRtp;
-  struct sockaddr_storage m0_localHostRtcp;
-  struct sockaddr_storage m0_localRflxRtp;
-  struct sockaddr_storage m0_localRflxRtcp;
-  struct sockaddr_storage m0_localRelayRtp;
-  struct sockaddr_storage m0_localRelayRtcp;
+  struct socket_addr m0_defaultAddr;
+  struct socket_addr m0_localHostRtp;
+  struct socket_addr m0_localHostRtcp;
+  struct socket_addr m0_localRflxRtp;
+  struct socket_addr m0_localRflxRtcp;
+  struct socket_addr m0_localRelayRtp;
+  struct socket_addr m0_localRelayRtcp;
 
-  struct sockaddr_storage m1_defaultAddr;
-  struct sockaddr_storage m1_localHostRtp;
-  struct sockaddr_storage m1_localHostRtcp;
-  struct sockaddr_storage m1_localRflxRtp;
-  struct sockaddr_storage m1_localRflxRtcp;
-  struct sockaddr_storage m1_localRelayRtp;
-  struct sockaddr_storage m1_localRelayRtcp;
+  struct socket_addr m1_defaultAddr;
+  struct socket_addr m1_localHostRtp;
+  struct socket_addr m1_localHostRtcp;
+  struct socket_addr m1_localRflxRtp;
+  struct socket_addr m1_localRflxRtcp;
+  struct socket_addr m1_localRelayRtp;
+  struct socket_addr m1_localRelayRtcp;
 
-  struct sockaddr_storage m2_defaultAddr;
-  struct sockaddr_storage m2_localHostRtp;
-  struct sockaddr_storage m2_localHostRtcp;
-  struct sockaddr_storage m2_localRflxRtp;
-  struct sockaddr_storage m2_localRflxRtcp;
-  struct sockaddr_storage m2_localRelayRtp;
-  struct sockaddr_storage m2_localRelayRtcp;
+  struct socket_addr m2_defaultAddr;
+  struct socket_addr m2_localHostRtp;
+  struct socket_addr m2_localHostRtcp;
+  struct socket_addr m2_localRflxRtp;
+  struct socket_addr m2_localRflxRtcp;
+  struct socket_addr m2_localRelayRtp;
+  struct socket_addr m2_localRelayRtcp;
 
 
   ICELIB_CONFIGURATION iceConfig;
@@ -155,45 +155,45 @@ CTEST_SETUP(data)
   m_icelib = (ICELIB_INSTANCE*)malloc( sizeof(ICELIB_INSTANCE) );
 
   /* ------------ Media Line: 0 */
-  sockaddr_initFromString( (struct sockaddr*)&m0_localHostRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m0_localHostRtp,
                            "192.168.2.10:3456" );
-  sockaddr_initFromString( (struct sockaddr*)&m0_localHostRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m0_localHostRtcp,
                            "192.168.2.10:3457" );
-  sockaddr_initFromString( (struct sockaddr*)&m0_localRflxRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m0_localRflxRtp,
                            "67.45.4.6:1045" );
-  sockaddr_initFromString( (struct sockaddr*)&m0_localRflxRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m0_localRflxRtcp,
                            "67.45.4.6:3451" );
-  sockaddr_initFromString( (struct sockaddr*)&m0_localRelayRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m0_localRelayRtp,
                            "158.38.46.10:2312" );
-  sockaddr_initFromString( (struct sockaddr*)&m0_localRelayRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m0_localRelayRtcp,
                            "158.38.46.10:4567" );
 
   /* ------------ Media Line: 1 */
-  sockaddr_initFromString( (struct sockaddr*)&m1_localHostRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m1_localHostRtp,
                            "192.168.2.10:3458" );
-  sockaddr_initFromString( (struct sockaddr*)&m1_localHostRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m1_localHostRtcp,
                            "192.168.2.10:3459" );
-  sockaddr_initFromString( (struct sockaddr*)&m1_localRflxRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m1_localRflxRtp,
                            "67.45.4.6:6123" );
-  sockaddr_initFromString( (struct sockaddr*)&m1_localRflxRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m1_localRflxRtcp,
                            "67.45.4.6:5831" );
-  sockaddr_initFromString( (struct sockaddr*)&m1_localRelayRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m1_localRelayRtp,
                            "158.38.46.10:2156" );
-  sockaddr_initFromString( (struct sockaddr*)&m1_localRelayRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m1_localRelayRtcp,
                            "158.38.46.10:6734" );
 
   /* ------------ Media Line: 2 */
-  sockaddr_initFromString( (struct sockaddr*)&m2_localHostRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m2_localHostRtp,
                            "192.168.2.10:3460" );
-  sockaddr_initFromString( (struct sockaddr*)&m2_localHostRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m2_localHostRtcp,
                            "192.168.2.10:3461" );
-  sockaddr_initFromString( (struct sockaddr*)&m2_localRflxRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m2_localRflxRtp,
                            "67.45.4.6:4532" );
-  sockaddr_initFromString( (struct sockaddr*)&m2_localRflxRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m2_localRflxRtcp,
                            "67.45.4.6:45678" );
-  sockaddr_initFromString( (struct sockaddr*)&m2_localRelayRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m2_localRelayRtp,
                            "158.38.46.10:56783" );
-  sockaddr_initFromString( (struct sockaddr*)&m2_localRelayRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&m2_localRelayRtcp,
                            "158.38.46.10:23451" );
 
 
@@ -226,7 +226,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            7,
-                           (struct sockaddr*)&m0_localHostRtp,
+                           (struct socket_addr*)&m0_localHostRtp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -235,7 +235,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            8,
-                           (struct sockaddr*)&m0_localHostRtcp,
+                           (struct socket_addr*)&m0_localHostRtcp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -244,8 +244,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            9,
-                           (struct sockaddr*)&m0_localRflxRtp,
-                           (struct sockaddr*)&m0_localHostRtp,
+                           (struct socket_addr*)&m0_localRflxRtp,
+                           (struct socket_addr*)&m0_localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX,
                            0xffff);
@@ -253,8 +253,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            10,
-                           (struct sockaddr*)&m0_localRflxRtcp,
-                           (struct sockaddr*)&m0_localHostRtp,
+                           (struct socket_addr*)&m0_localRflxRtcp,
+                           (struct socket_addr*)&m0_localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX,
                            0xffff);
@@ -262,8 +262,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            3,
-                           (struct sockaddr*)&m0_localRelayRtp,
-                           (struct sockaddr*)&m0_localRflxRtp,
+                           (struct socket_addr*)&m0_localRelayRtp,
+                           (struct socket_addr*)&m0_localRflxRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY,
                            0xffff);
@@ -271,8 +271,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            5,
-                           (struct sockaddr*)&m0_localRelayRtcp,
-                           (struct sockaddr*)&m0_localRflxRtcp,
+                           (struct socket_addr*)&m0_localRelayRtcp,
+                           (struct socket_addr*)&m0_localRflxRtcp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY,
                            0xffff);
@@ -284,7 +284,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            6,
-                           (struct sockaddr*)&m1_localHostRtp,
+                           (struct socket_addr*)&m1_localHostRtp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -293,7 +293,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            7,
-                           (struct sockaddr*)&m1_localHostRtcp,
+                           (struct socket_addr*)&m1_localHostRtcp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -303,8 +303,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            8,
-                           (struct sockaddr*)&m1_localRflxRtp,
-                           (struct sockaddr*)&m1_localHostRtp,
+                           (struct socket_addr*)&m1_localRflxRtp,
+                           (struct socket_addr*)&m1_localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX,
                            0xffff);
@@ -312,8 +312,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            7,
-                           (struct sockaddr*)&m1_localRflxRtcp,
-                           (struct sockaddr*)&m1_localHostRtp,
+                           (struct socket_addr*)&m1_localRflxRtcp,
+                           (struct socket_addr*)&m1_localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX,
                            0xffff);
@@ -321,8 +321,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            8,
-                           (struct sockaddr*)&m1_localRelayRtp,
-                           (struct sockaddr*)&m1_localRflxRtp,
+                           (struct socket_addr*)&m1_localRelayRtp,
+                           (struct socket_addr*)&m1_localRflxRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY,
                            0xffff);
@@ -330,8 +330,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            78,
-                           (struct sockaddr*)&m1_localRelayRtcp,
-                           (struct sockaddr*)&m1_localRflxRtcp,
+                           (struct socket_addr*)&m1_localRelayRtcp,
+                           (struct socket_addr*)&m1_localRflxRtcp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY,
                            0xffff);
@@ -342,7 +342,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            5,
-                           (struct sockaddr*)&m2_localHostRtp,
+                           (struct socket_addr*)&m2_localHostRtp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -351,7 +351,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            5,
-                           (struct sockaddr*)&m2_localHostRtcp,
+                           (struct socket_addr*)&m2_localHostRtcp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -360,8 +360,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            5,
-                           (struct sockaddr*)&m2_localRflxRtp,
-                           (struct sockaddr*)&m2_localHostRtp,
+                           (struct socket_addr*)&m2_localRflxRtp,
+                           (struct socket_addr*)&m2_localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX,
                            0xffff);
@@ -369,8 +369,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            5,
-                           (struct sockaddr*)&m2_localRflxRtcp,
-                           (struct sockaddr*)&m2_localHostRtp,
+                           (struct socket_addr*)&m2_localRflxRtcp,
+                           (struct socket_addr*)&m2_localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX,
                            0xffff);
@@ -378,8 +378,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            5,
-                           (struct sockaddr*)&m2_localRelayRtp,
-                           (struct sockaddr*)&m2_localRflxRtp,
+                           (struct socket_addr*)&m2_localRelayRtp,
+                           (struct socket_addr*)&m2_localRflxRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY,
                            0xffff);
@@ -387,8 +387,8 @@ CTEST_SETUP(data)
                            mediaIdx,
                            2,
                            5,
-                           (struct sockaddr*)&m2_localRelayRtcp,
-                           (struct sockaddr*)&m2_localRflxRtcp,
+                           (struct socket_addr*)&m2_localRelayRtcp,
+                           (struct socket_addr*)&m2_localRflxRtcp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY,
                            0xffff);
@@ -400,11 +400,11 @@ CTEST_SETUP(data)
   /* Remote side */
   /* Medialine:
    *  0 */
-  sockaddr_initFromString( (struct sockaddr*)&m0_defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&m0_defaultAddr,
                            "10.47.2.246:47936" );
 
   ICELIB_addRemoteMediaStream(m_icelib, m0_remoteUfrag, m0_remotePasswd,
-                              (struct sockaddr*)&m0_defaultAddr);
+                              (struct socket_addr*)&m0_defaultAddr);
   ICELIB_addRemoteCandidate(m_icelib,
                             0,
                             "1",
@@ -469,11 +469,11 @@ CTEST_SETUP(data)
                             ICE_CAND_TYPE_RELAY);
 
   /* Medialine: 1 */
-  sockaddr_initFromString( (struct sockaddr*)&m1_defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&m1_defaultAddr,
                            "10.47.2.246:47938" );
 
   ICELIB_addRemoteMediaStream(m_icelib, m1_remoteUfrag, m1_remotePasswd,
-                              (struct sockaddr*)&m1_defaultAddr);
+                              (struct socket_addr*)&m1_defaultAddr);
   ICELIB_addRemoteCandidate(m_icelib,
                             1,
                             "1",
@@ -538,11 +538,11 @@ CTEST_SETUP(data)
                             ICE_CAND_TYPE_RELAY);
 
   /* Medialine: 2 */
-  sockaddr_initFromString( (struct sockaddr*)&m2_defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&m2_defaultAddr,
                            "10.47.2.246:47940" );
 
   ICELIB_addRemoteMediaStream(m_icelib, m2_remoteUfrag, m2_remotePasswd,
-                              (struct sockaddr*)&m2_defaultAddr);
+                              (struct socket_addr*)&m2_defaultAddr);
   ICELIB_addRemoteCandidate(m_icelib,
                             2,
                             "1",
@@ -1057,10 +1057,10 @@ CTEST2(data, controlled)
   /* char srcAddrStr[] = "10.47.1.23:52456"; */
   /* char respRflxAddrStr[] = "158.38.48.10:52423"; */
 
-  struct sockaddr_storage srcAddr;
-  struct sockaddr_storage dstAddr;
+  struct socket_addr srcAddr;
+  struct socket_addr dstAddr;
 
-  /* struct sockaddr_storage respRflxAddr; */
+  /* struct socket_addr respRflxAddr; */
 
 
   memset( &m_connChkCB, 0, sizeof(m_ConncheckCB) );
@@ -1092,8 +1092,8 @@ CTEST2(data, controlled)
   /* send some nominating messages.. */
   /* Medialine: 0 */
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m0_remoteHostRtpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3456" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m0_remoteHostRtpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3456" );
   ICELIB_getCheckListRemoteUsernamePair(ufragPair,
                                         ICE_MAX_UFRAG_PAIR_LENGTH,
                                         &m_icelib->streamControllers[0].checkList,
@@ -1111,15 +1111,15 @@ CTEST2(data, controlled)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 1);
   ICELIB_Tick(m_icelib);
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m0_remoteHostRtcpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3457" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m0_remoteHostRtcpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3457" );
 
   ICELIB_incomingBindingRequest(m_icelib,
                                 1,
@@ -1133,8 +1133,8 @@ CTEST2(data, controlled)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 2);
@@ -1142,8 +1142,8 @@ CTEST2(data, controlled)
   ICELIB_Tick(m_icelib);
   /* Medialine: 1 */
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m1_remoteHostRtpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3458" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m1_remoteHostRtpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3458" );
   ICELIB_getCheckListRemoteUsernamePair(ufragPair,
                                         ICE_MAX_UFRAG_PAIR_LENGTH,
                                         &m_icelib->streamControllers[1].checkList,
@@ -1161,15 +1161,15 @@ CTEST2(data, controlled)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 1);
   ICELIB_Tick(m_icelib);
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m1_remoteHostRtcpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3459" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m1_remoteHostRtcpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3459" );
 
   ICELIB_incomingBindingRequest(m_icelib,
                                 1,
@@ -1183,16 +1183,16 @@ CTEST2(data, controlled)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 2);
 
   /* Medialine: 2 */
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m2_remoteHostRtpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3460" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m2_remoteHostRtpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3460" );
   ICELIB_getCheckListRemoteUsernamePair(ufragPair,
                                         ICE_MAX_UFRAG_PAIR_LENGTH,
                                         &m_icelib->streamControllers[2].checkList,
@@ -1209,15 +1209,15 @@ CTEST2(data, controlled)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 1);
 
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m2_remoteHostRtcpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3461" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m2_remoteHostRtcpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3461" );
 
   ICELIB_incomingBindingRequest(m_icelib,
                                 1,
@@ -1231,8 +1231,8 @@ CTEST2(data, controlled)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 2);
@@ -1255,10 +1255,10 @@ CTEST2(data, controlled_inactive)
   /* char srcAddrStr[] = "10.47.1.23:52456"; */
   /* char respRflxAddrStr[] = "158.38.48.10:52423"; */
 
-  struct sockaddr_storage srcAddr;
-  struct sockaddr_storage dstAddr;
+  struct socket_addr srcAddr;
+  struct socket_addr dstAddr;
 
-  /* struct sockaddr_storage respRflxAddr; */
+  /* struct socket_addr respRflxAddr; */
 
 
   memset( &m_connChkCB, 0, sizeof(m_ConncheckCB) );
@@ -1303,8 +1303,8 @@ CTEST2(data, controlled_inactive)
   /* send some nominating messages.. */
   /* Medialine: 0 */
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m0_remoteHostRtpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3456" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m0_remoteHostRtpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3456" );
   ICELIB_getCheckListRemoteUsernamePair(ufragPair,
                                         ICE_MAX_UFRAG_PAIR_LENGTH,
                                         &m_icelib->streamControllers[0].checkList,
@@ -1321,15 +1321,15 @@ CTEST2(data, controlled_inactive)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 1);
   ICELIB_Tick(m_icelib);
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m0_remoteHostRtcpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3457" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m0_remoteHostRtcpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3457" );
 
   ICELIB_incomingBindingRequest(m_icelib,
                                 1,
@@ -1343,8 +1343,8 @@ CTEST2(data, controlled_inactive)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 2);
@@ -1352,8 +1352,8 @@ CTEST2(data, controlled_inactive)
   ICELIB_Tick(m_icelib);
   /* Medialine: 1 */
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m1_remoteHostRtpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3458" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m1_remoteHostRtpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3458" );
   ICELIB_getCheckListRemoteUsernamePair(ufragPair,
                                         ICE_MAX_UFRAG_PAIR_LENGTH,
                                         &m_icelib->streamControllers[1].checkList,
@@ -1371,15 +1371,15 @@ CTEST2(data, controlled_inactive)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 1);
   ICELIB_Tick(m_icelib);
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m1_remoteHostRtcpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3459" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m1_remoteHostRtcpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3459" );
 
   ICELIB_incomingBindingRequest(m_icelib,
                                 1,
@@ -1393,16 +1393,16 @@ CTEST2(data, controlled_inactive)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 2);
 
   /* Medialine: 2 */
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m2_remoteHostRtpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3460" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m2_remoteHostRtpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3460" );
   ICELIB_getCheckListRemoteUsernamePair(ufragPair,
                                         ICE_MAX_UFRAG_PAIR_LENGTH,
                                         &m_icelib->streamControllers[2].checkList,
@@ -1419,15 +1419,15 @@ CTEST2(data, controlled_inactive)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 1);
 
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, m2_remoteHostRtcpAddr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3461" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, m2_remoteHostRtcpAddr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3461" );
 
   ICELIB_incomingBindingRequest(m_icelib,
                                 1,
@@ -1441,8 +1441,8 @@ CTEST2(data, controlled_inactive)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 2);

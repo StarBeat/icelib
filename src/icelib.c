@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 
 
@@ -60,11 +61,11 @@ log_debug_pair(ICELIB_CALLBACK_LOG* pCallbackLog,
   if (pCallbackLog)
   {
     char local[SOCKADDR_MAX_STRLEN], remote[SOCKADDR_MAX_STRLEN];
-    sockaddr_toString( (struct sockaddr*)&pair->pLocalCandidate->connectionAddr,
+    sockaddr_toString( (struct socket_addr*)&pair->pLocalCandidate->connectionAddr,
                        local,
                        sizeof(local), true );
     sockaddr_toString(
-      (struct sockaddr*)&pair->pRemoteCandidate->connectionAddr, remote,
+      (struct socket_addr*)&pair->pRemoteCandidate->connectionAddr, remote,
       sizeof(
         remote),                      true);
 
@@ -239,16 +240,16 @@ ICELIB_makeUsernamePair(char*       dst,
 const ICE_CANDIDATE*
 pICELIB_findCandidate(const ICE_MEDIA_STREAM* pMediaStream,
                       int                     proto,
-                      const struct sockaddr*  address,
+                      const struct socket_addr*  address,
                       unsigned                componentId)
 {
   uint32_t i;
 
   for (i = 0; i < pMediaStream->numberOfCandidates; ++i)
   {
-    if ( sockaddr_alike( (struct sockaddr*)&pMediaStream->candidate[ i].
+    if ( sockaddr_alike( (struct socket_addr*)&pMediaStream->candidate[ i].
                          connectionAddr,
-                         (struct sockaddr*)address )
+                         (struct socket_addr*)address )
          && (ICE_TRANSPORT_proto(pMediaStream->candidate[i].transport) == proto)
          && (pMediaStream->candidate[i].componentid == componentId) )
     {
@@ -467,8 +468,8 @@ ICELIB_veryfyICESupportOnStream(const ICELIB_INSTANCE*  pInstance,
   {
     ICE_CANDIDATE const* candidate = &stream->candidate[i];
 
-    if ( sockaddr_sameAddr( (struct sockaddr*)&candidate->connectionAddr,
-                            (struct sockaddr*)&stream->defaultAddr ) )
+    if ( sockaddr_sameAddr( (struct socket_addr*)&candidate->connectionAddr,
+                            (struct socket_addr*)&stream->defaultAddr ) )
     {
       return true;
     }
@@ -712,8 +713,8 @@ ICELIB_isEmptyCandidate(const ICE_CANDIDATE* pCandidate)
 bool
 ICELIB_isNonValidCandidate(const ICE_CANDIDATE* pCandidate)
 {
-  return !sockaddr_isSet( (struct sockaddr*)&pCandidate->connectionAddr ) ||
-         sockaddr_isAddrAny( (struct sockaddr*)&pCandidate->connectionAddr );
+  return !sockaddr_isSet( (struct socket_addr*)&pCandidate->connectionAddr ) ||
+         sockaddr_isAddrAny( (struct socket_addr*)&pCandidate->connectionAddr );
 }
 
 
@@ -745,8 +746,8 @@ ICELIB_clearRedundantCandidates(ICE_CANDIDATE candidates[])
       for (j = i + 1; j < ICE_MAX_CANDIDATES; ++j)
       {
 
-        if ( sockaddr_alike( (struct sockaddr*)&candidates[ i].connectionAddr,
-                             (struct sockaddr*)&candidates[ j].connectionAddr )
+        if ( sockaddr_alike( (struct socket_addr*)&candidates[ i].connectionAddr,
+                             (struct socket_addr*)&candidates[ j].connectionAddr )
              && (candidates[i].transport == candidates[j].transport)
              && (candidates[i].componentid == candidates[j].componentid) )
         {
@@ -970,8 +971,8 @@ ICELIB_formPairs(ICELIB_CHECKLIST*       pCheckList,
            && remoteLocalTransportMatch(pLocalCand->transport,
                                         pRemoteCand->transport) )
       {
-        if (pLocalCand->connectionAddr.ss_family ==
-            pRemoteCand->connectionAddr.ss_family)
+        if (pLocalCand->connectionAddr.isv4 ==
+            pRemoteCand->connectionAddr.isv4)
         {
 
           /* Local and remote matches in component ID and address type, */
@@ -1939,8 +1940,8 @@ ICELIB_scheduleCheck(ICELIB_INSTANCE*  pInstance,
     BindingRequest(pInstance->callbacks.callbackRequest.pBindingRequestUserData,
                    ICE_TRANSPORT_proto(pPair->pLocalCandidate->transport),
                    pPair->pLocalCandidate->socket,
-                   (struct sockaddr*)&pPair->pRemoteCandidate->connectionAddr,
-                   (struct sockaddr*)&pPair->pLocalCandidate->connectionAddr,
+                   (struct socket_addr*)&pPair->pRemoteCandidate->connectionAddr,
+                   (struct socket_addr*)&pPair->pLocalCandidate->connectionAddr,
                    pPair->pLocalCandidate->userValue1,
                    pPair->pLocalCandidate->userValue2,
                    pPair->pLocalCandidate->componentid,
@@ -2137,11 +2138,11 @@ unsigned int
 ICELIB_findStreamByAddress(ICELIB_STREAM_CONTROLLER streamControllers[],
                            unsigned int             numberOfMediaStreams,
                            int                      proto,
-                           const struct sockaddr*   pHostAddr)
+                           const struct socket_addr*   pHostAddr)
 {
   unsigned int           i;
   unsigned int           j;
-  const struct sockaddr* pAddr;
+  const struct socket_addr* pAddr;
   ICELIB_CHECKLIST*      pCheckList;
 
   for (i = 0; i < numberOfMediaStreams; ++i)
@@ -2155,7 +2156,7 @@ ICELIB_findStreamByAddress(ICELIB_STREAM_CONTROLLER streamControllers[],
         ICE_TRANSPORT transport =
           pCheckList->checkListPairs[j].pLocalCandidate->transport;
         pAddr =
-          (struct sockaddr*)&pCheckList->checkListPairs[j].pLocalCandidate->
+          (struct socket_addr*)&pCheckList->checkListPairs[j].pLocalCandidate->
           connectionAddr;
         if ( sockaddr_alike(pAddr, pHostAddr)
              && (ICE_TRANSPORT_proto(transport) == proto) )
@@ -2386,9 +2387,9 @@ ICELIB_storeRemoteCandidates(ICELIB_INSTANCE* pInstance)
         pInstance->streamControllers[i].remoteCandidates.
         remoteCandidate[ICELIB_RTP_COMPONENT_INDEX].componentId =
           ICELIB_RTP_COMPONENT_ID;
-        sockaddr_copy( (struct sockaddr*)&pInstance->streamControllers[i].remoteCandidates.
+        sockaddr_copy( (struct socket_addr*)&pInstance->streamControllers[i].remoteCandidates.
                        remoteCandidate[ICELIB_RTP_COMPONENT_INDEX].connectionAddr,
-                       (struct sockaddr*)&pRemoteCandidate->connectionAddr );
+                       (struct socket_addr*)&pRemoteCandidate->connectionAddr );
         pInstance->streamControllers[i].remoteCandidates.
         remoteCandidate[ICELIB_RTP_COMPONENT_INDEX].transport =
           pRemoteCandidate->transport;
@@ -2405,9 +2406,9 @@ ICELIB_storeRemoteCandidates(ICELIB_INSTANCE* pInstance)
         pInstance->streamControllers[i].remoteCandidates.
         remoteCandidate[ICELIB_RTCP_COMPONENT_INDEX].componentId =
           ICELIB_RTCP_COMPONENT_ID;
-        sockaddr_copy( (struct sockaddr*)&pInstance->streamControllers[i].remoteCandidates.
+        sockaddr_copy( (struct socket_addr*)&pInstance->streamControllers[i].remoteCandidates.
                        remoteCandidate[ICELIB_RTCP_COMPONENT_INDEX].connectionAddr,
-                       (struct sockaddr*)&pRemoteCandidate->connectionAddr );
+                       (struct socket_addr*)&pRemoteCandidate->connectionAddr );
         pInstance->streamControllers[i].remoteCandidates.
         remoteCandidate[ICELIB_RTCP_COMPONENT_INDEX].transport =
           pRemoteCandidate->transport;
@@ -2431,7 +2432,7 @@ ICELIB_storeRemoteCandidates(ICELIB_INSTANCE* pInstance)
 bool
 ICELIB_validListNominatePair(ICELIB_VALIDLIST*      pValidList,
                              ICELIB_LIST_PAIR*      pPair,
-                             const struct sockaddr* pMappedAddress)
+                             const struct socket_addr* pMappedAddress)
 {
   unsigned int      i;
   ICELIB_LIST_PAIR* pPairFromList;
@@ -2456,8 +2457,8 @@ ICELIB_validListNominatePair(ICELIB_VALIDLIST*      pValidList,
    * */
 
   dummyCandidate.transport = pPair->pLocalCandidate->transport;
-  sockaddr_copy( (struct sockaddr*)&dummyCandidate.connectionAddr,
-                 (struct sockaddr*)pMappedAddress );
+  sockaddr_copy( (struct socket_addr*)&dummyCandidate.connectionAddr,
+                 (struct socket_addr*)pMappedAddress );
   dummyPair.pLocalCandidate  = &dummyCandidate;
   dummyPair.pRemoteCandidate = pPair->pRemoteCandidate;
 
@@ -2785,18 +2786,18 @@ pICELIB_correlateToRequest(unsigned int*    pStreamIndex,
 /*  */
 bool
 ICELIB_checkSourceAndDestinationAddr(const ICELIB_LIST_PAIR* pPair,
-                                     const struct sockaddr*  source,
-                                     const struct sockaddr*  destination)
+                                     const struct socket_addr*  source,
+                                     const struct socket_addr*  destination)
 {
-  if ( !sockaddr_alike( (struct sockaddr*)&pPair->pLocalCandidate->
+  if ( !sockaddr_alike( (struct socket_addr*)&pPair->pLocalCandidate->
                         connectionAddr,
-                        (struct sockaddr*)destination ) )
+                        (struct socket_addr*)destination ) )
   {
     return false;
   }
-  if ( !sockaddr_alike( (struct sockaddr*)&pPair->pRemoteCandidate->
+  if ( !sockaddr_alike( (struct socket_addr*)&pPair->pRemoteCandidate->
                         connectionAddr,
-                        (struct sockaddr*)source ) )
+                        (struct socket_addr*)source ) )
   {
     return false;
   }
@@ -2814,17 +2815,17 @@ bool
 ICELIB_isPairAddressMatch(const ICELIB_LIST_PAIR* pPair1,
                           const ICELIB_LIST_PAIR* pPair2)
 {
-  if ( !sockaddr_alike( (struct sockaddr*)&pPair1->pLocalCandidate->
+  if ( !sockaddr_alike( (struct socket_addr*)&pPair1->pLocalCandidate->
                         connectionAddr,
-                        (struct sockaddr*)&pPair2->pLocalCandidate->
+                        (struct socket_addr*)&pPair2->pLocalCandidate->
                         connectionAddr ) )
   {
     return false;
   }
 
-  if ( !sockaddr_alike( (struct sockaddr*)&pPair1->pRemoteCandidate->
+  if ( !sockaddr_alike( (struct socket_addr*)&pPair1->pRemoteCandidate->
                         connectionAddr,
-                        (struct sockaddr*)&pPair2->pRemoteCandidate->
+                        (struct socket_addr*)&pPair2->pRemoteCandidate->
                         connectionAddr ) )
   {
     return false;
@@ -2871,14 +2872,14 @@ ICELIB_addDiscoveredCandidate(ICE_MEDIA_STREAM*    pMediaStream,
 void
 ICELIB_makePeerLocalReflexiveCandidate(ICE_CANDIDATE*         pPeerCandidate,
                                        ICELIB_CALLBACK_LOG*   pCallbackLog,
-                                       const struct sockaddr* pMappedAddress,
+                                       const struct socket_addr* pMappedAddress,
                                        ICE_TRANSPORT          transport,
                                        int                    socketfd,
                                        uint16_t               componentId)
 {
   ICELIB_resetCandidate(pPeerCandidate);
-  sockaddr_copy( (struct sockaddr*)&pPeerCandidate->connectionAddr,
-                 (struct sockaddr*)pMappedAddress );
+  sockaddr_copy( (struct socket_addr*)&pPeerCandidate->connectionAddr,
+                 (struct socket_addr*)pMappedAddress );
   pPeerCandidate->type        = ICE_CAND_TYPE_PRFLX;
   pPeerCandidate->componentid = componentId;
   ICELIB_createFoundation(pPeerCandidate->foundation,
@@ -2901,7 +2902,7 @@ ICELIB_makePeerLocalReflexiveCandidate(ICE_CANDIDATE*         pPeerCandidate,
 void
 ICELIB_makePeerRemoteReflexiveCandidate(ICE_CANDIDATE*         pPeerCandidate,
                                         ICELIB_CALLBACK_LOG*   pCallbackLog,
-                                        const struct sockaddr* sourceAddr,
+                                        const struct socket_addr* sourceAddr,
                                         ICE_TRANSPORT          transport,
                                         uint32_t               peerPriority,
                                         uint16_t               componentId)
@@ -2911,8 +2912,8 @@ ICELIB_makePeerRemoteReflexiveCandidate(ICE_CANDIDATE*         pPeerCandidate,
   pPeerCandidate->priority  = peerPriority;
   pPeerCandidate->type      = ICE_CAND_TYPE_PRFLX;
   pPeerCandidate->transport = transport;
-  sockaddr_copy( (struct sockaddr*)&pPeerCandidate->connectionAddr,
-                 (struct sockaddr*)sourceAddr );
+  sockaddr_copy( (struct socket_addr*)&pPeerCandidate->connectionAddr,
+                 (struct socket_addr*)sourceAddr );
   pPeerCandidate->type        = ICE_CAND_TYPE_PRFLX;
   pPeerCandidate->componentid = componentId;
   strncpy(pPeerCandidate->foundation, "2345\0", ICELIB_FOUNDATION_LENGTH);
@@ -3022,7 +3023,7 @@ ICELIB_processSuccessResponse(ICELIB_INSTANCE*        pInstance,
                               ICELIB_CHECKLIST*       pCurrentCheckList,
                               ICELIB_VALIDLIST*       pValidList,
                               ICELIB_LIST_PAIR*       pPair,
-                              const struct sockaddr*  pMappedAddress,
+                              const struct socket_addr*  pMappedAddress,
                               bool                    iceControlling)
 {
   bool                      listFull;
@@ -3087,8 +3088,8 @@ ICELIB_processSuccessResponse(ICELIB_INSTANCE*        pInstance,
                     pPair->pLocalCandidate->componentid,
                     pPair->pairPriority,
                     proto,
-                    (const struct sockaddr*)&pPair->pLocalCandidate->connectionAddr,
-                    (const struct sockaddr*)&pPair->pRemoteCandidate->connectionAddr);
+                    (const struct socket_addr*)&pPair->pLocalCandidate->connectionAddr,
+                    (const struct socket_addr*)&pPair->pRemoteCandidate->connectionAddr);
         }
       }
       ICELIB_updatingStates(pInstance);
@@ -3405,9 +3406,9 @@ void
 ICELIB_incomingBindingResponse(ICELIB_INSTANCE*       pInstance,
                                uint16_t               errorResponse,
                                StunMsgId              transactionId,
-                               const struct sockaddr* source,
-                               const struct sockaddr* destination,
-                               const struct sockaddr* mappedAddress)
+                               const struct socket_addr* source,
+                               const struct socket_addr* destination,
+                               const struct socket_addr* mappedAddress)
 {
   unsigned int            streamIndex;
   bool                    iceControlling;
@@ -3546,8 +3547,8 @@ ICELIB_incomingBindingResponse(ICELIB_INSTANCE*       pInstance,
   /*      If they are not symmetric, the agent sets the state of the pair to */
   /*      Failed. */
   /*  */
-  if ( !ICELIB_checkSourceAndDestinationAddr(pPair, (struct sockaddr*)source,
-                                             (struct sockaddr*)destination) )
+  if ( !ICELIB_checkSourceAndDestinationAddr(pPair, (struct socket_addr*)source,
+                                             (struct socket_addr*)destination) )
   {
 
     ICELIB_log(&pInstance->callbacks.callbackLog, ICELIB_logDebug,
@@ -3561,7 +3562,7 @@ ICELIB_incomingBindingResponse(ICELIB_INSTANCE*       pInstance,
                      "Pair local           != ");
     ICELIB_netAddrDumpLog(&pInstance->callbacks.callbackLog,
                           ICELIB_logDebug,
-                          (struct sockaddr*)&pPair->pLocalCandidate->connectionAddr);
+                          (struct socket_addr*)&pPair->pLocalCandidate->connectionAddr);
     ICELIB_logString(&pInstance->callbacks.callbackLog,
                      ICELIB_logDebug,
                      "Incoming destination: ");
@@ -3576,7 +3577,7 @@ ICELIB_incomingBindingResponse(ICELIB_INSTANCE*       pInstance,
                      " OR Pair remote          !=");
     ICELIB_netAddrDumpLog(&pInstance->callbacks.callbackLog,
                           ICELIB_logDebug,
-                          (struct sockaddr*)&pPair->pRemoteCandidate->connectionAddr);
+                          (struct socket_addr*)&pPair->pRemoteCandidate->connectionAddr);
     ICELIB_logString(&pInstance->callbacks.callbackLog,
                      ICELIB_logDebug,
                      "Incoming source     : ");
@@ -3728,9 +3729,9 @@ void
 ICELIB_sendBindingResponse(ICELIB_INSTANCE*       pInstance,
                            int                    sockfd,
                            int                    proto,
-                           const struct sockaddr* source,
-                           const struct sockaddr* destination,
-                           const struct sockaddr* MappedAddress,
+                           const struct socket_addr* source,
+                           const struct socket_addr* destination,
+                           const struct socket_addr* MappedAddress,
                            uint32_t               userValue1,
                            uint32_t               userValue2,
                            uint16_t               componentId,
@@ -3769,9 +3770,9 @@ ICELIB_processSuccessRequest(ICELIB_INSTANCE*        pInstance,
                              StunMsgId               transactionId,
                              int                     sockfd,
                              int                     proto,
-                             const struct sockaddr*  source,
-                             const struct sockaddr*  destination,
-                             const struct sockaddr*  relayBaseAddr,
+                             const struct socket_addr*  source,
+                             const struct socket_addr*  destination,
+                             const struct socket_addr*  relayBaseAddr,
                              uint32_t                userValue1,
                              uint32_t                userValue2,
                              uint32_t                peerPriority,
@@ -3944,7 +3945,7 @@ ICELIB_processSuccessRequest(ICELIB_INSTANCE*        pInstance,
                       ICELIB_logDebug,
                       "Canceling Transaction. Transaction Table Size(%d).",
                       pKnownPair->numberOfTransactionIds);
-          for (uint i = 0; i < pKnownPair->numberOfTransactionIds; i++)
+          for (uint32_t i = 0; i < pKnownPair->numberOfTransactionIds; i++)
           {
             CancelReq(
               pInstance->callbacks.callbackCancelRequest.pCancelRequestUserData,
@@ -4105,8 +4106,8 @@ ICELIB_processIncommingLite(ICELIB_INSTANCE*       pInstance,
                             bool                   iceControlled,
                             uint64_t               tieBreaker,
                             StunMsgId              transactionId,
-                            const struct sockaddr* source,
-                            const struct sockaddr* destination,
+                            const struct socket_addr* source,
+                            const struct socket_addr* destination,
                             uint16_t               componentId)
 {
   (void)userValue1;
@@ -4130,7 +4131,7 @@ ICELIB_processIncommingLite(ICELIB_INSTANCE*       pInstance,
 static unsigned int
 ICELIB_findStreamInLocalMedia(ICELIB_INSTANCE*       instance,
                               int                    proto,
-                              const struct sockaddr* destination)
+                              const struct socket_addr* destination)
 {
   uint32_t     i, j;
   unsigned int streamIndex = ICELIB_STREAM_NOT_FOUND;
@@ -4145,8 +4146,8 @@ ICELIB_findStreamInLocalMedia(ICELIB_INSTANCE*       instance,
     {
       if (pLocalMS->candidate[j].type == ICE_CAND_TYPE_HOST)
       {
-        const struct sockaddr* pAddr =
-          (struct sockaddr*)&pLocalMS->candidate[j].connectionAddr;
+        const struct socket_addr* pAddr =
+          (struct socket_addr*)&pLocalMS->candidate[j].connectionAddr;
         if ( sockaddr_alike(pAddr, destination)
              && (ICE_TRANSPORT_proto(pLocalMS->candidate[j].transport) ==
                  proto) )
@@ -4172,10 +4173,10 @@ ICELIB_processIncommingFull(ICELIB_INSTANCE*       pInstance,
                             StunMsgId              transactionId,
                             int                    sockfd,
                             int                    proto,
-                            const struct sockaddr* source,
-                            const struct sockaddr* destination,
+                            const struct socket_addr* source,
+                            const struct socket_addr* destination,
                             bool                   fromRelay,
-                            const struct sockaddr* relayBaseAddr,
+                            const struct socket_addr* relayBaseAddr,
                             uint16_t               componentId)
 
 {
@@ -4430,10 +4431,10 @@ ICELIB_incomingBindingRequest(ICELIB_INSTANCE*       pInstance,
                               StunMsgId              transactionId,
                               int                    sockfd,
                               int                    proto,
-                              const struct sockaddr* source,
-                              const struct sockaddr* destination,
+                              const struct socket_addr* source,
+                              const struct socket_addr* destination,
                               bool                   fromRelay,
-                              const struct sockaddr* relayBaseAddr,
+                              const struct socket_addr* relayBaseAddr,
                               uint16_t               componentId)
 {
 
@@ -5733,7 +5734,7 @@ ICELIB_UnsupportedByRemote (const ICELIB_INSTANCE* pInstance)
 {
   if ( pInstance && (pInstance->iceState == ICELIB_MANGLED) )
   {
-    for (uint i = 0; i < pInstance->remoteIceMedia.numberOfICEMediaLines; i++)
+    for (uint32_t i = 0; i < pInstance->remoteIceMedia.numberOfICEMediaLines; i++)
     {
       if (pInstance->remoteIceMedia.mediaStream[i].numberOfCandidates > 0)
       {
@@ -5838,7 +5839,7 @@ ICELIB_getActiveCandidate(const ICELIB_INSTANCE* pInstance,
    * that
    * */
   if ( pInstance &&
-       (pInstance->localIceMedia.numberOfICEMediaLines > (uint) mediaLineId) )
+       (pInstance->localIceMedia.numberOfICEMediaLines > (uint32_t) mediaLineId) )
   {
     mediaStream =  &pInstance->localIceMedia.mediaStream[mediaLineId];
     for (i = 0;
@@ -5921,12 +5922,12 @@ ICELIB_isControlling(const ICELIB_INSTANCE* pInstance)
 void
 ICELIB_netAddrDumpLog(const ICELIB_CALLBACK_LOG* pCallbackLog,
                       ICELIB_logLevel            logLevel,
-                      const struct sockaddr*     netAddr)
+                      const struct socket_addr*     netAddr)
 {
   char addr[SOCKADDR_MAX_STRLEN];
 
   if ( netAddr &&
-       sockaddr_toString( (struct sockaddr*)netAddr, addr, sizeof(addr),
+       sockaddr_toString( (struct socket_addr*)netAddr, addr, sizeof(addr),
                           true ) )
   {
     ICELIB_logVaString(pCallbackLog, logLevel, "  %s", addr);
@@ -5977,7 +5978,7 @@ ICELIB_candidateDumpLog(const ICELIB_CALLBACK_LOG* pCallbackLog,
   ICELIB_logVaString(pCallbackLog, logLevel, "Addr: ");
   ICELIB_netAddrDumpLog(pCallbackLog,
                         logLevel,
-                        (struct sockaddr*)&candidate->connectionAddr);
+                        (struct socket_addr*)&candidate->connectionAddr);
   ICELIB_logVaString( pCallbackLog, logLevel, " Type: '%s' ", ICELIBTYPES_ICE_CANDIDATE_TYPE_toString(
                         candidate->type) );
   ICELIB_logVaString( pCallbackLog, logLevel, "Trans: %s",    ICELIBTYPES_ICE_TRANSPORT_toString(
@@ -6195,7 +6196,7 @@ ICELIB_validListDumpLog(const ICELIB_CALLBACK_LOG* pCallbackLog,
 
 
 void
-ICELIB_netAddrDump(const struct sockaddr* netAddr)
+ICELIB_netAddrDump(const struct socket_addr* netAddr)
 {
   ICELIB_netAddrDumpLog(NULL, ICELIB_logDebug, netAddr);
 }
@@ -6301,8 +6302,7 @@ ICELIB_getNumberOfRemoteCandidates(const ICELIB_INSTANCE* pInstance,
   return pInstance->remoteIceMedia.mediaStream[idx].numberOfCandidates;
 }
 
-
-uint32_t
+int32_t
 ICELIB_getLocalComponentId(const ICELIB_INSTANCE* pInstance,
                            uint32_t               mediaIdx,
                            uint32_t               candIdx)
@@ -6322,8 +6322,7 @@ ICELIB_getLocalComponentId(const ICELIB_INSTANCE* pInstance,
          componentid;
 }
 
-
-uint32_t
+int32_t
 ICELIB_getRemoteComponentId(const ICELIB_INSTANCE* pInstance,
                             uint32_t               mediaIdx,
                             uint32_t               candIdx)
@@ -6344,7 +6343,7 @@ ICELIB_getRemoteComponentId(const ICELIB_INSTANCE* pInstance,
 }
 
 
-struct sockaddr const*
+struct socket_addr const*
 ICELIB_getLocalConnectionAddr(const ICELIB_INSTANCE* pInstance,
                               uint32_t               mediaIdx,
                               uint32_t               candIdx)
@@ -6360,11 +6359,11 @@ ICELIB_getLocalConnectionAddr(const ICELIB_INSTANCE* pInstance,
     return NULL;
   }
 
-  return (struct sockaddr*)&pInstance->localIceMedia.mediaStream[mediaIdx].
+  return (struct socket_addr*)&pInstance->localIceMedia.mediaStream[mediaIdx].
          candidate[candIdx].connectionAddr;
 }
 
-struct sockaddr const*
+struct socket_addr const*
 ICELIB_getRemoteConnectionAddr(const ICELIB_INSTANCE* pInstance,
                                uint32_t               mediaIdx,
                                uint32_t               candIdx)
@@ -6380,7 +6379,7 @@ ICELIB_getRemoteConnectionAddr(const ICELIB_INSTANCE* pInstance,
     return NULL;
   }
 
-  return (struct sockaddr*)&pInstance->remoteIceMedia.mediaStream[mediaIdx].
+  return (struct socket_addr*)&pInstance->remoteIceMedia.mediaStream[mediaIdx].
          candidate[candIdx].connectionAddr;
 }
 
@@ -6469,7 +6468,7 @@ ICELIB_fillRemoteCandidate(ICE_CANDIDATE*     cand,
                            const char*        foundation,
                            uint32_t           foundationLen,
                            uint32_t           priority,
-                           struct sockaddr*   connectionAddr,
+                           struct socket_addr*   connectionAddr,
                            ICE_TRANSPORT      transport,
                            ICE_CANDIDATE_TYPE candType)
 {
@@ -6480,8 +6479,8 @@ ICELIB_fillRemoteCandidate(ICE_CANDIDATE*     cand,
   cand->foundation[sizeof(cand->foundation) - 1] = '\0';
 
 
-  sockaddr_copy( (struct sockaddr*)&cand->connectionAddr,
-                 (struct sockaddr*)connectionAddr );
+  sockaddr_copy( (struct socket_addr*)&cand->connectionAddr,
+                 (struct socket_addr*)connectionAddr );
 
   cand->transport   = transport;
   cand->type        = candType;
@@ -6497,8 +6496,8 @@ void
 ICELIB_fillLocalCandidate(ICE_CANDIDATE*         cand,
                           uint32_t               componentId,
                           int                    socket,
-                          const struct sockaddr* connectionAddr,
-                          const struct sockaddr* relAddr,
+                          const struct socket_addr* connectionAddr,
+                          const struct socket_addr* relAddr,
                           ICE_TRANSPORT          transport,
                           ICE_CANDIDATE_TYPE     candType,
                           uint16_t               local_pref)
@@ -6508,15 +6507,15 @@ ICELIB_fillLocalCandidate(ICE_CANDIDATE*         cand,
                                                componentId,
                                                local_pref);
 
-  sockaddr_copy( (struct sockaddr*)&cand->connectionAddr,
-                 (struct sockaddr*)connectionAddr );
+  sockaddr_copy( (struct socket_addr*)&cand->connectionAddr,
+                 (struct socket_addr*)connectionAddr );
   cand->socket      = socket;
   cand->type        = candType;
   cand->componentid = componentId;
   cand->transport   = transport;
   if (transport == ICE_TRANS_TCPACT)
   {
-    sockaddr_setPort( (struct sockaddr*)&cand->connectionAddr, 9 );
+    sockaddr_setPort( (struct socket_addr*)&cand->connectionAddr, 9 );
   }
 
   ICELIB_createFoundation(cand->foundation,
@@ -6528,8 +6527,8 @@ ICELIB_fillLocalCandidate(ICE_CANDIDATE*         cand,
   cand->priority = priority;
   if (relAddr != NULL)
   {
-    sockaddr_copy( (struct sockaddr*)&cand->relAddr,
-                   (struct sockaddr*)relAddr );
+    sockaddr_copy( (struct socket_addr*)&cand->relAddr,
+                   (struct socket_addr*)relAddr );
   }
 
 }
@@ -6540,8 +6539,8 @@ ICELIB_addLocalCandidate(ICELIB_INSTANCE*       pInstance,
                          uint32_t               mediaIdx,
                          uint32_t               componentId,
                          int                    socket,
-                         const struct sockaddr* connectionAddr,
-                         const struct sockaddr* relAddr,
+                         const struct socket_addr* connectionAddr,
+                         const struct socket_addr* relAddr,
                          ICE_TRANSPORT          transport,
                          ICE_CANDIDATE_TYPE     candType,
                          uint16_t               local_pref)
@@ -6612,7 +6611,7 @@ ICELIB_addRemoteCandidate(ICELIB_INSTANCE*   pInstance,
 
   ICE_MEDIA_STREAM*       mediaStream;
   ICE_CANDIDATE*          iceCand;
-  struct sockaddr_storage addr;
+  struct socket_addr addr;
 
   if (mediaIdx >= pInstance->remoteIceMedia.numberOfICEMediaLines)
   {
@@ -6634,7 +6633,7 @@ ICELIB_addRemoteCandidate(ICELIB_INSTANCE*   pInstance,
 
 
 
-  if ( !sockaddr_initFromString( (struct sockaddr*)&addr,
+  if ( !sockaddr_initFromString( (struct socket_addr*)&addr,
                                  connectionAddr ) )
   {
     ICELIB_log(&pInstance->callbacks.callbackLog,
@@ -6643,14 +6642,14 @@ ICELIB_addRemoteCandidate(ICELIB_INSTANCE*   pInstance,
     return -1;
 
   }
-  sockaddr_setPort( (struct sockaddr*)&addr, port );
+  sockaddr_setPort( (struct socket_addr*)&addr, port );
 
   ICELIB_fillRemoteCandidate(iceCand,
                              componentId,
                              foundation,
                              foundationLen,
                              priority,
-                             (struct sockaddr*)&addr,
+                             (struct socket_addr*)&addr,
                              transport,
                              candType);
 
@@ -6742,7 +6741,7 @@ ICELIB_setRemoteMediaStream(ICELIB_INSTANCE*       pInstance,
                             uint32_t               mediaIdx,
                             const char*            ufrag,
                             const char*            pwd,
-                            const struct sockaddr* defaultAddr)
+                            const struct socket_addr* defaultAddr)
 {
 
   ICE_MEDIA_STREAM* mediaStream;
@@ -6782,8 +6781,8 @@ ICELIB_setRemoteMediaStream(ICELIB_INSTANCE*       pInstance,
 
   if (defaultAddr != NULL)
   {
-    sockaddr_copy( (struct sockaddr*)&mediaStream->defaultAddr,
-                   (struct sockaddr*)defaultAddr );
+    sockaddr_copy( (struct socket_addr*)&mediaStream->defaultAddr,
+                   (struct socket_addr*)defaultAddr );
   }
   else
   {
@@ -6801,7 +6800,7 @@ int32_t
 ICELIB_addRemoteMediaStream(ICELIB_INSTANCE*       pInstance,
                             const char*            ufrag,
                             const char*            pwd,
-                            const struct sockaddr* defaultAddr)
+                            const struct socket_addr* defaultAddr)
 {
 
   int32_t mediaIdx = 0;
@@ -6848,7 +6847,7 @@ ICELIB_getLocalIceMedia(const ICELIB_INSTANCE* pInstance)
   return &pInstance->localIceMedia;
 }
 
-struct sockaddr const*
+struct socket_addr const*
 ICELIB_getLocalRelayAddr(const ICELIB_INSTANCE* pInstance,
                          uint32_t               mediaIdx)
 {
@@ -6863,7 +6862,7 @@ ICELIB_getLocalRelayAddr(const ICELIB_INSTANCE* pInstance,
       if (pInstance->localIceMedia.mediaStream[mediaIdx].candidate[i].type ==
           ICE_CAND_TYPE_RELAY)
       {
-        return (struct sockaddr*)&pInstance->localIceMedia.mediaStream[
+        return (struct socket_addr*)&pInstance->localIceMedia.mediaStream[
           mediaIdx]
                .candidate[i].connectionAddr;
       }
@@ -6915,9 +6914,9 @@ ICELIB_getLocalMediaStream(const ICELIB_INSTANCE* pInstance,
 }
 
 
-struct sockaddr const*
+struct socket_addr const*
 ICELIB_getLocalRelayAddrFromHostAddr(const ICELIB_INSTANCE* pInstance,
-                                     const struct sockaddr* hostAddr)
+                                     const struct socket_addr* hostAddr)
 {
   /* TODO: Rewrite Not using MAX values (Use actual number of stred instead)
    * */
@@ -6928,9 +6927,9 @@ ICELIB_getLocalRelayAddrFromHostAddr(const ICELIB_INSTANCE* pInstance,
     for (j = 0; j < ICE_MAX_CANDIDATES; j++)
     {
 
-      if ( sockaddr_alike( (const struct sockaddr*)&pInstance->localIceMedia.
+      if ( sockaddr_alike( (const struct socket_addr*)&pInstance->localIceMedia.
                            mediaStream[i].candidate[j].connectionAddr,
-                           (const struct sockaddr*)hostAddr ) )
+                           (const struct socket_addr*)hostAddr ) )
       {
         /* Found a match. No find the relay candidate.. */
         uint32_t compId =
@@ -6944,7 +6943,7 @@ ICELIB_getLocalRelayAddrFromHostAddr(const ICELIB_INSTANCE* pInstance,
                 == compId) )
           {
 
-            return (struct sockaddr*)&pInstance->localIceMedia.mediaStream[i].
+            return (struct socket_addr*)&pInstance->localIceMedia.mediaStream[i].
                    candidate[k].connectionAddr;
           }
         }

@@ -9,7 +9,8 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include <netinet/in.h>
+#include "xnet.h"
+#include "macro.h"
 
 struct console_output;
 
@@ -176,17 +177,17 @@ typedef struct {
   uint32_t                componentid;
   uint32_t                priority;
   int                     socket;
-  struct sockaddr_storage connectionAddr;
+  struct socket_addr connectionAddr;
   ICE_TRANSPORT           transport;
   ICE_CANDIDATE_TYPE      type;
-  struct sockaddr_storage relAddr;
+  struct socket_addr relAddr;
   uint32_t                userValue1;
   uint32_t                userValue2;
 } ICE_CANDIDATE;
 
 typedef struct {
   uint32_t                componentId;
-  struct sockaddr_storage connectionAddr;
+  struct socket_addr connectionAddr;
   ICE_TRANSPORT           transport;
   ICE_CANDIDATE_TYPE      type;
 } ICE_REMOTE_CANDIDATE;
@@ -207,7 +208,7 @@ typedef struct {
   ICE_TURN_STATE          turnState;
   uint32_t                userValue1;
   uint32_t                userValue2;
-  struct sockaddr_storage defaultAddr;
+  struct socket_addr defaultAddr;
   ICE_CANDIDATE_TYPE      defaultCandType;
 } ICE_MEDIA_STREAM;
 
@@ -303,32 +304,25 @@ typedef struct {
                                                  * here */
 } ICELIB_STREAM_CONTROLLER;
 
-void
-ICELIBTYPES_ICE_CANDIDATE_reset(ICE_CANDIDATE* candidate);
+FUNC_DECL void ICELIBTYPES_ICE_CANDIDATE_reset(ICE_CANDIDATE* candidate);
 
-void
-ICELIBTYPES_ICE_MEDIA_STREAM_reset(ICE_MEDIA_STREAM* iceMediaStream);
-bool
-ICELIBTYPES_ICE_MEDIA_STREAM_isEmpty(const ICE_MEDIA_STREAM* iceMediaStream);
+FUNC_DECL void ICELIBTYPES_ICE_MEDIA_STREAM_reset(ICE_MEDIA_STREAM* iceMediaStream);
 
-void
-ICELIBTYPES_ICE_MEDIA_reset(ICE_MEDIA* iceMedia);
-bool
-ICELIBTYPES_ICE_MEDIA_isEmpty(const ICE_MEDIA* iceMedia);
+FUNC_DECL bool ICELIBTYPES_ICE_MEDIA_STREAM_isEmpty(const ICE_MEDIA_STREAM* iceMediaStream);
 
-char const*
-ICELIBTYPES_ICE_CANDIDATE_TYPE_toString(const ICE_CANDIDATE_TYPE candidateType);
-char const*
-ICELIBTYPES_ICE_CANDIDATE_Component_toString (uint32_t componentid);
+FUNC_DECL void ICELIBTYPES_ICE_MEDIA_reset(ICE_MEDIA* iceMedia);
 
-char const*
-ICELIBTYPES_ICE_TRANSPORT_toString(ICE_TRANSPORT t);
+FUNC_DECL bool ICELIBTYPES_ICE_MEDIA_isEmpty(const ICE_MEDIA* iceMedia);
 
-char const*
-ICELIBTYPES_ICE_TRANSPORT_PROTO_toString(const ICE_TRANSPORT t);
+FUNC_DECL char const* ICELIBTYPES_ICE_CANDIDATE_TYPE_toString(const ICE_CANDIDATE_TYPE candidateType);
 
-int
-ICE_TRANSPORT_proto(ICE_TRANSPORT transport);
+FUNC_DECL char const* ICELIBTYPES_ICE_CANDIDATE_Component_toString (uint32_t componentid);
+
+FUNC_DECL char const* ICELIBTYPES_ICE_TRANSPORT_toString(ICE_TRANSPORT t);
+
+FUNC_DECL char const* ICELIBTYPES_ICE_TRANSPORT_PROTO_toString(const ICE_TRANSPORT t);
+
+FUNC_DECL int ICE_TRANSPORT_proto(ICE_TRANSPORT transport);
 
 #ifdef __cplusplus
 }

@@ -14,8 +14,8 @@ static char      remotePasswd[] = "rm0Pa";
 
 typedef struct {
   bool                   gotCB;
-  const struct sockaddr* destination;
-  const struct sockaddr* source;
+  const struct socket_addr* destination;
+  const struct socket_addr* source;
   uint32_t               userValue1;
   uint32_t               userValue2;
   uint32_t               componentId;
@@ -35,8 +35,8 @@ typedef struct {
 typedef struct {
   uint64_t                priority;
   int32_t                 proto;
-  struct sockaddr_storage local;
-  struct sockaddr_storage remote;
+  struct socket_addr local;
+  struct socket_addr remote;
 }m_NominationCB;
 
 m_ConncheckCB m_connChkCB[50];
@@ -70,8 +70,8 @@ Nominated(void*                  pUserData,
           uint32_t               componentId,
           uint64_t               priority,
           int32_t                proto,
-          const struct sockaddr* local,
-          const struct sockaddr* remote)
+          const struct socket_addr* local,
+          const struct socket_addr* remote)
 {
   (void)pUserData;
   (void)userValue1;
@@ -84,9 +84,9 @@ Nominated(void*                  pUserData,
 
   m_nominationCB[num_pair_nom].priority = priority;
   m_nominationCB[num_pair_nom].proto    = proto;
-  sockaddr_copy( (struct sockaddr*)&m_nominationCB[num_pair_nom].local,
+  sockaddr_copy( (struct socket_addr*)&m_nominationCB[num_pair_nom].local,
                  local );
-  sockaddr_copy( (struct sockaddr*)&m_nominationCB[num_pair_nom].remote,
+  sockaddr_copy( (struct socket_addr*)&m_nominationCB[num_pair_nom].remote,
                  remote );
   num_pair_nom++;
   return 0;
@@ -96,8 +96,8 @@ ICELIB_Result
 sendConnectivityCheck(void*                  pUserData,
                       int                    proto,
                       int                    socket,
-                      const struct sockaddr* destination,
-                      const struct sockaddr* source,
+                      const struct socket_addr* destination,
+                      const struct socket_addr* source,
                       uint32_t               userValue1,
                       uint32_t               userValue2,
                       uint32_t               componentId,
@@ -176,9 +176,9 @@ CTEST_DATA(data)
 CTEST_SETUP(data)
 {
   (void)data;
-  struct sockaddr_storage m0_defaultAddr;
-  struct sockaddr_storage m0_localHostRtp;
-  struct sockaddr_storage m1_localHostRtp;
+  struct socket_addr m0_defaultAddr;
+  struct socket_addr m0_localHostRtp;
+  struct socket_addr m1_localHostRtp;
 
   ICELIB_CONFIGURATION iceConfig;
 
@@ -191,9 +191,9 @@ CTEST_SETUP(data)
 
   m_icelib = (ICELIB_INSTANCE*)malloc( sizeof(ICELIB_INSTANCE) );
 
-  sockaddr_initFromString( (struct sockaddr*)&m0_localHostRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m0_localHostRtp,
                            "192.168.2.10:56780" );
-  sockaddr_initFromString( (struct sockaddr*)&m1_localHostRtp,
+  sockaddr_initFromString( (struct socket_addr*)&m1_localHostRtp,
                            "192.168.2.10:56788" );
 
 
@@ -234,7 +234,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            5,
-                           (struct sockaddr*)&m0_localHostRtp,
+                           (struct socket_addr*)&m0_localHostRtp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -244,7 +244,7 @@ CTEST_SETUP(data)
                            mediaIdx,
                            1,
                            5,
-                           (struct sockaddr*)&m1_localHostRtp,
+                           (struct socket_addr*)&m1_localHostRtp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST,
@@ -252,11 +252,11 @@ CTEST_SETUP(data)
 
   /* Remote side */
   /* Medialine: 0 */
-  sockaddr_initFromString( (struct sockaddr*)&m0_defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&m0_defaultAddr,
                            "158.38.48.10:5004" );
 
   ICELIB_addRemoteMediaStream(m_icelib, remoteUfrag, remotePasswd,
-                              (struct sockaddr*)&m0_defaultAddr);
+                              (struct socket_addr*)&m0_defaultAddr);
   ICELIB_addRemoteCandidate(m_icelib,
                             0,
                             "1",
@@ -290,11 +290,11 @@ CTEST_SETUP(data)
                             ICE_TRANS_UDP,
                             ICE_CAND_TYPE_HOST);
   /* Medialine: 1 */
-  sockaddr_initFromString( (struct sockaddr*)&m0_defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&m0_defaultAddr,
                            "158.38.48.10:5004" );
 
   ICELIB_addRemoteMediaStream(m_icelib, remoteUfrag, remotePasswd,
-                              (struct sockaddr*)&m0_defaultAddr);
+                              (struct socket_addr*)&m0_defaultAddr);
   ICELIB_addRemoteCandidate(m_icelib,
                             1,
                             "1",
@@ -393,14 +393,14 @@ CTEST2(data, multiple_host_addr)
   ICELIB_Tick(m_icelib);
 
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[0].local) == 56780);
+                (const struct socket_addr*)&m_nominationCB[0].local) == 56780);
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[0].remote) == 5004);
+                (const struct socket_addr*)&m_nominationCB[0].remote) == 5004);
 
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[1].local) == 56788);
+                (const struct socket_addr*)&m_nominationCB[1].local) == 56788);
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[1].remote) == 5004);
+                (const struct socket_addr*)&m_nominationCB[1].remote) == 5004);
 
 
   ASSERT_TRUE( ICELIB_isIceComplete(m_icelib) );
@@ -476,14 +476,14 @@ CTEST2(data, multiple_host_addr_medialine_fail)
   }
 
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[0].local) == 56780);
+                (const struct socket_addr*)&m_nominationCB[0].local) == 56780);
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[0].remote) == 5004);
+                (const struct socket_addr*)&m_nominationCB[0].remote) == 5004);
 
   ASSERT_FALSE(sockaddr_ipPort(
-                 (const struct sockaddr*)&m_nominationCB[1].local) == 56788);
+                 (const struct socket_addr*)&m_nominationCB[1].local) == 56788);
   ASSERT_FALSE(sockaddr_ipPort(
-                 (const struct sockaddr*)&m_nominationCB[1].remote) == 5004);
+                 (const struct socket_addr*)&m_nominationCB[1].remote) == 5004);
 
 
   ASSERT_FALSE( ICELIB_isIceComplete(m_icelib) );
@@ -532,9 +532,9 @@ CTEST2(data, multiple_host_addr_missing)
   ICELIB_Tick(m_icelib);
 
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[0].local) == 56780);
+                (const struct socket_addr*)&m_nominationCB[0].local) == 56780);
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[0].remote) == 33434);
+                (const struct socket_addr*)&m_nominationCB[0].remote) == 33434);
 
 
   /* So lets see what happens if a beetr pri pair shows up.. */
@@ -557,9 +557,9 @@ CTEST2(data, multiple_host_addr_missing)
   ICELIB_Tick(m_icelib);
   ICELIB_Tick(m_icelib);
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[1].local) == 56780);
+                (const struct socket_addr*)&m_nominationCB[1].local) == 56780);
   ASSERT_TRUE(sockaddr_ipPort(
-                (const struct sockaddr*)&m_nominationCB[1].remote) == 3478);
+                (const struct socket_addr*)&m_nominationCB[1].remote) == 3478);
 
 
   for (int i = 0; i < 2000; i++)

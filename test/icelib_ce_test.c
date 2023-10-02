@@ -27,8 +27,8 @@ ICELIB_Result
 ICELIB_TEST_sendConnectivityCheck(void*                  pUserData,
                                   int                    proto,
                                   int                    socket,
-                                  const struct sockaddr* destination,
-                                  const struct sockaddr* source,
+                                  const struct socket_addr* destination,
+                                  const struct socket_addr* source,
                                   uint32_t               userValue1,
                                   uint32_t               userValue2,
                                   uint32_t               componentId,
@@ -78,8 +78,8 @@ isLegalString(const char* str)
 
 struct ConncheckCB {
   bool                   gotCB;
-  const struct sockaddr* destination;
-  const struct sockaddr* source;
+  const struct socket_addr* destination;
+  const struct socket_addr* source;
   uint32_t               userValue1;
   uint32_t               userValue2;
   uint32_t               componentId;
@@ -101,8 +101,8 @@ ICELIB_Result
 ICELIB_TEST_sendConnectivityCheck(void*                  pUserData,
                                   int                    proto,
                                   int socket,
-                                  const struct sockaddr* destination,
-                                  const struct sockaddr* source,
+                                  const struct socket_addr* destination,
+                                  const struct socket_addr* source,
                                   uint32_t               userValue1,
                                   uint32_t               userValue2,
                                   uint32_t               componentId,
@@ -156,27 +156,27 @@ static char remotePasswd[] = "remPa";
 static void
 icelib_setup ()
 {
-  struct sockaddr_storage defaultAddr;
-  struct sockaddr_storage localHostRtp;
-  struct sockaddr_storage localHostRtcp;
-  struct sockaddr_storage localRflxRtp;
-  struct sockaddr_storage localRflxRtcp;
-  struct sockaddr_storage localRelayRtp;
-  struct sockaddr_storage localRelayRtcp;
+  struct socket_addr defaultAddr;
+  struct socket_addr localHostRtp;
+  struct socket_addr localHostRtcp;
+  struct socket_addr localRflxRtp;
+  struct socket_addr localRflxRtcp;
+  struct socket_addr localRelayRtp;
+  struct socket_addr localRelayRtcp;
 
   ICELIB_CONFIGURATION iceConfig;
 
   icelib = (ICELIB_INSTANCE*)malloc( sizeof(ICELIB_INSTANCE) );
 
-  sockaddr_initFromString( (struct sockaddr*)&localHostRtp,
+  sockaddr_initFromString( (struct socket_addr*)&localHostRtp,
                            "192.168.2.10:3456" );
-  sockaddr_initFromString( (struct sockaddr*)&localHostRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&localHostRtcp,
                            "192.168.2.10:3457" );
-  sockaddr_initFromString( (struct sockaddr*)&localRflxRtp,  "67.45.4.6:1045" );
-  sockaddr_initFromString( (struct sockaddr*)&localRflxRtcp, "67.45.4.6:3451" );
-  sockaddr_initFromString( (struct sockaddr*)&localRelayRtp,
+  sockaddr_initFromString( (struct socket_addr*)&localRflxRtp,  "67.45.4.6:1045" );
+  sockaddr_initFromString( (struct socket_addr*)&localRflxRtcp, "67.45.4.6:3451" );
+  sockaddr_initFromString( (struct socket_addr*)&localRelayRtp,
                            "158.38.46.10:2312" );
-  sockaddr_initFromString( (struct sockaddr*)&localRelayRtcp,
+  sockaddr_initFromString( (struct socket_addr*)&localRelayRtcp,
                            "158.38.46.10:4567" );
 
   iceConfig.tickIntervalMS       = 20;
@@ -205,7 +205,7 @@ icelib_setup ()
                            0,
                            1,
                            5,
-                           (struct sockaddr*)&localHostRtp,
+                           (struct socket_addr*)&localHostRtp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST, 0xffff);
@@ -214,7 +214,7 @@ icelib_setup ()
                            0,
                            2,
                            5,
-                           (struct sockaddr*)&localHostRtcp,
+                           (struct socket_addr*)&localHostRtcp,
                            NULL,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_HOST, 0xffff);
@@ -226,8 +226,8 @@ icelib_setup ()
                            0,
                            1,
                            5,
-                           (struct sockaddr*)&localRflxRtp,
-                           (struct sockaddr*)&localHostRtp,
+                           (struct socket_addr*)&localRflxRtp,
+                           (struct socket_addr*)&localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX, 0xffff);
 
@@ -235,8 +235,8 @@ icelib_setup ()
                            0,
                            2,
                            5,
-                           (struct sockaddr*)&localRflxRtcp,
-                           (struct sockaddr*)&localHostRtp,
+                           (struct socket_addr*)&localRflxRtcp,
+                           (struct socket_addr*)&localHostRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_SRFLX, 0xffff);
 
@@ -246,8 +246,8 @@ icelib_setup ()
                            0,
                            1,
                            5,
-                           (struct sockaddr*)&localRelayRtp,
-                           (struct sockaddr*)&localRflxRtp,
+                           (struct socket_addr*)&localRelayRtp,
+                           (struct socket_addr*)&localRflxRtp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY, 0xffff);
 
@@ -255,8 +255,8 @@ icelib_setup ()
                            0,
                            2,
                            5,
-                           (struct sockaddr*)&localRelayRtcp,
-                           (struct sockaddr*)&localRflxRtcp,
+                           (struct socket_addr*)&localRelayRtcp,
+                           (struct socket_addr*)&localRflxRtcp,
                            ICE_TRANS_UDP,
                            ICE_CAND_TYPE_RELAY, 0xffff);
 
@@ -265,7 +265,7 @@ icelib_setup ()
 
 
   /* Remote side */
-  sockaddr_initFromString( (struct sockaddr*)&defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&defaultAddr,
                            "10.47.2.246:47936" );
 
 
@@ -274,12 +274,12 @@ icelib_setup ()
   ICELIB_addRemoteMediaStream(icelib,
                               remoteUfrag,
                               remotePasswd,
-                              (struct sockaddr*)&defaultAddr);
+                              (struct socket_addr*)&defaultAddr);
 
 
 
 
-  sockaddr_initFromString( (struct sockaddr*)&defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&defaultAddr,
                            "0.0.0.0:0" );
 
 
@@ -594,11 +594,11 @@ CTEST(icelib_ce, create_remoteMediaStream)
 {
   ICELIB_INSTANCE      remoteIcelib;
   ICELIB_CONFIGURATION remoteIceConfig;
-  struct sockaddr      defaultAddr;
+  struct socket_addr      defaultAddr;
 
   int32_t result,i;
 
-  sockaddr_initFromString( (struct sockaddr*)&defaultAddr,
+  sockaddr_initFromString( (struct socket_addr*)&defaultAddr,
                            "10.47.2.246:47936" );
 
 
@@ -1189,7 +1189,7 @@ CTEST(icelib_ce, conncheck)
 
   ICELIB_Tick(icelib);
   ASSERT_TRUE(strncmp(remoteHostRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1203,7 +1203,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1217,7 +1217,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRelayRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1231,7 +1231,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteHostRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1246,7 +1246,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRelayRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1261,7 +1261,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1275,7 +1275,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteHostRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1290,7 +1290,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1304,7 +1304,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1319,7 +1319,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRelayRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1333,7 +1333,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteHostRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1347,7 +1347,7 @@ CTEST(icelib_ce, conncheck)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRelayRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1393,10 +1393,10 @@ CTEST(icelib_ce, conncheck_withIncomming)
   char      srcAddrStr[]      = "10.47.1.23:52456";
   char      respRflxAddrStr[] = "158.38.48.10:52423";
 
-  struct sockaddr_storage srcAddr;
-  struct sockaddr_storage dstAddr;
+  struct socket_addr srcAddr;
+  struct socket_addr dstAddr;
 
-  struct sockaddr_storage respRflxAddr;
+  struct socket_addr respRflxAddr;
 
   memset( &connChkCB, 0, sizeof(struct ConncheckCB) );
 
@@ -1406,7 +1406,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
 
   ICELIB_Tick(icelib);
   ASSERT_TRUE(strncmp(remoteHostRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1420,7 +1420,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1434,7 +1434,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRelayRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1444,8 +1444,8 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ASSERT_FALSE(connChkCB.useRelay);
 
   stunlib_createId(&stunId);
-  sockaddr_initFromString( (struct sockaddr*)&srcAddr, srcAddrStr );
-  sockaddr_initFromString( (struct sockaddr*)&dstAddr, "192.168.2.10:3456" );
+  sockaddr_initFromString( (struct socket_addr*)&srcAddr, srcAddrStr );
+  sockaddr_initFromString( (struct socket_addr*)&dstAddr, "192.168.2.10:3456" );
   ICELIB_getCheckListRemoteUsernamePair(ufragPair,
                                         ICE_MAX_UFRAG_PAIR_LENGTH,
                                         &icelib->streamControllers[0].checkList,
@@ -1463,8 +1463,8 @@ CTEST(icelib_ce, conncheck_withIncomming)
                                 stunId,
                                 7,
                                 IPPROTO_UDP,
-                                (struct sockaddr*)&srcAddr,
-                                (const struct sockaddr*)&dstAddr,
+                                (struct socket_addr*)&srcAddr,
+                                (const struct socket_addr*)&dstAddr,
                                 false,
                                 NULL,
                                 1);
@@ -1474,7 +1474,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(srcAddrStr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1488,7 +1488,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteHostRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1503,7 +1503,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRelayRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1517,7 +1517,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1531,7 +1531,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteHostRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1545,7 +1545,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1553,14 +1553,14 @@ CTEST(icelib_ce, conncheck_withIncomming)
                       INET_ADDRSTRLEN) == 0);
 
   ASSERT_FALSE(connChkCB.useRelay);
-  sockaddr_initFromString( (struct sockaddr*)&respRflxAddr, respRflxAddrStr );
+  sockaddr_initFromString( (struct socket_addr*)&respRflxAddr, respRflxAddrStr );
 
   ICELIB_incomingBindingResponse(icelib,
                                  200,
                                  connChkCB.transactionId,
                                  connChkCB.destination,
                                  connChkCB.source,
-                                 (struct sockaddr*)&respRflxAddr);
+                                 (struct socket_addr*)&respRflxAddr);
 
 
   /* 10. Tick */
@@ -1568,7 +1568,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRflxRtpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1582,7 +1582,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteRelayRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1596,7 +1596,7 @@ CTEST(icelib_ce, conncheck_withIncomming)
   ICELIB_Tick(icelib);
 
   ASSERT_TRUE(strncmp(remoteHostRtcpAddr,
-                      sockaddr_toString( (const struct sockaddr*)connChkCB.
+                      sockaddr_toString( (const struct socket_addr*)connChkCB.
                                          destination,
                                          ipaddr,
                                          SOCKADDR_MAX_STRLEN,
@@ -1699,28 +1699,28 @@ CTEST(icelib_ce, findCandidates)
 
   ICE_MEDIA_STREAM mediaStream;
 
-  struct sockaddr_storage addr1;
+  struct socket_addr addr1;
 
-  sockaddr_initFromString( (struct sockaddr*)&addr1,
+  sockaddr_initFromString( (struct socket_addr*)&addr1,
                            "10.47.1.34" );
 
   ICELIBTYPES_ICE_MEDIA_STREAM_reset(&mediaStream);
 
   ASSERT_TRUE( NULL == pICELIB_findCandidate(&mediaStream,
                                              IPPROTO_UDP,
-                                             (struct sockaddr*)&addr1,
+                                             (struct socket_addr*)&addr1,
                                              0) );
 
   mediaStream.numberOfCandidates = 1;
 
-  sockaddr_copy( (struct sockaddr*)&mediaStream.candidate[0].connectionAddr,
-                 (struct sockaddr*)&addr1 );
+  sockaddr_copy( (struct socket_addr*)&mediaStream.candidate[0].connectionAddr,
+                 (struct socket_addr*)&addr1 );
 
   mediaStream.candidate[0].transport = ICE_TRANS_UDP;
 
   ASSERT_FALSE( NULL == pICELIB_findCandidate(&mediaStream,
                                               IPPROTO_UDP,
-                                              (struct sockaddr*)&addr1,
+                                              (struct socket_addr*)&addr1,
                                               0) );
 
 
@@ -1927,18 +1927,18 @@ CTEST(icelib_ce, formPairs_IPv4)
   ICE_CANDIDATE*   cand;
 
   /* set up addresses */
-  struct sockaddr_storage localHost;
-  struct sockaddr_storage localRelay;
-  struct sockaddr_storage remoteHost;
-  struct sockaddr_storage remoteRelay;
+  struct socket_addr localHost;
+  struct socket_addr localRelay;
+  struct socket_addr remoteHost;
+  struct socket_addr remoteRelay;
 
-  sockaddr_initFromString( (struct sockaddr*)&localHost,
+  sockaddr_initFromString( (struct socket_addr*)&localHost,
                            "192.168.2.10:3456" );
-  sockaddr_initFromString( (struct sockaddr*)&localRelay,
+  sockaddr_initFromString( (struct socket_addr*)&localRelay,
                            "158.38.48.10:4534" );
-  sockaddr_initFromString( (struct sockaddr*)&remoteHost,
+  sockaddr_initFromString( (struct socket_addr*)&remoteHost,
                            "192.168.2.10:3459" );
-  sockaddr_initFromString( (struct sockaddr*)&remoteRelay, "8.8.8.8:4444" );
+  sockaddr_initFromString( (struct socket_addr*)&remoteRelay, "8.8.8.8:4444" );
 
   ICELIBTYPES_ICE_MEDIA_STREAM_reset(&LocalMediaStream);
   ICELIBTYPES_ICE_MEDIA_STREAM_reset(&RemoteMediaStream);
@@ -1949,7 +1949,7 @@ CTEST(icelib_ce, formPairs_IPv4)
   ICELIB_fillLocalCandidate(cand,
                             1,
                             5,
-                            (struct sockaddr*)&localHost,
+                            (struct socket_addr*)&localHost,
                             NULL,
                             ICE_TRANS_UDP,
                             ICE_CAND_TYPE_HOST, 0xffff);
@@ -1960,7 +1960,7 @@ CTEST(icelib_ce, formPairs_IPv4)
   ICELIB_fillLocalCandidate(cand,
                             1,
                             5,
-                            (struct sockaddr*)&localRelay,
+                            (struct socket_addr*)&localRelay,
                             NULL,
                             ICE_TRANS_UDP,
                             ICE_CAND_TYPE_RELAY, 0xffff);
@@ -1978,7 +1978,7 @@ CTEST(icelib_ce, formPairs_IPv4)
                              "TJA",
                              3,
                              2130706431,
-                             (struct sockaddr*)&remoteHost,
+                             (struct socket_addr*)&remoteHost,
                              ICE_TRANS_UDP,
                              ICE_CAND_TYPE_HOST);
   RemoteMediaStream.numberOfCandidates++;
@@ -1990,7 +1990,7 @@ CTEST(icelib_ce, formPairs_IPv4)
                              "TJA",
                              3,
                              30706431,
-                             (struct sockaddr*)&remoteRelay,
+                             (struct socket_addr*)&remoteRelay,
                              ICE_TRANS_UDP,
                              ICE_CAND_TYPE_RELAY);
   RemoteMediaStream.numberOfCandidates++;
@@ -2011,43 +2011,43 @@ CTEST(icelib_ce, formPairs_IPv4)
 
   /* Check pair 0 */
   ASSERT_TRUE( CheckList.checkListPairs[0].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[0
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[0
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localHost ) );
+                                  (struct socket_addr*)&localHost ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[0
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[0
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteHost ) );
+                                  (struct socket_addr*)&remoteHost ) );
 
   /* Check pair 1 */
   ASSERT_TRUE( CheckList.checkListPairs[1].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[1
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[1
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localHost ) );
+                                  (struct socket_addr*)&localHost ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[1
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[1
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteRelay ) );
+                                  (struct socket_addr*)&remoteRelay ) );
 
   /* Check pair 2 */
   ASSERT_TRUE( CheckList.checkListPairs[2].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[2
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[2
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localRelay ) );
+                                  (struct socket_addr*)&localRelay ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[2
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[2
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteHost ) );
+                                  (struct socket_addr*)&remoteHost ) );
 
   /* Check pair 3 */
   ASSERT_TRUE( CheckList.checkListPairs[3].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[3
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[3
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localRelay ) );
+                                  (struct socket_addr*)&localRelay ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[3
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[3
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteRelay ) );
+                                  (struct socket_addr*)&remoteRelay ) );
 
   /* ICELIB_checkListDump(&CheckList); */
   /* fflush(stdout); */
@@ -2066,19 +2066,19 @@ CTEST(icelib_ce, formPairs_IPv6)
   ICE_CANDIDATE*   cand;
 
   /* set up addresses */
-  struct sockaddr_storage localHost_6;
-  struct sockaddr_storage localRelay_6;
-  struct sockaddr_storage remoteHost_6;
-  struct sockaddr_storage remoteRelay_6;
+  struct socket_addr localHost_6;
+  struct socket_addr localRelay_6;
+  struct socket_addr remoteHost_6;
+  struct socket_addr remoteRelay_6;
 
 
-  sockaddr_initFromString( (struct sockaddr*)&localHost_6,
+  sockaddr_initFromString( (struct socket_addr*)&localHost_6,
                            "[2001:420:4:eb66:119a:ddff:fe3a:27d1]:2345" );
-  sockaddr_initFromString( (struct sockaddr*)&localRelay_6,
+  sockaddr_initFromString( (struct socket_addr*)&localRelay_6,
                            "[2001:420:2:ea63:119a:ddff:fe3a:27d1]:6789" );
-  sockaddr_initFromString( (struct sockaddr*)&remoteHost_6,
+  sockaddr_initFromString( (struct socket_addr*)&remoteHost_6,
                            "[2001:421:4:eb46:119a:ddff:fe1a:27d4]:4381" );
-  sockaddr_initFromString( (struct sockaddr*)&remoteRelay_6,
+  sockaddr_initFromString( (struct socket_addr*)&remoteRelay_6,
                            "[2001:420:2:eb66:119a:ddff:fe3a:27d0]:2176" );
 
 
@@ -2092,7 +2092,7 @@ CTEST(icelib_ce, formPairs_IPv6)
   ICELIB_fillLocalCandidate(cand,
                             1,
                             5,
-                            (struct sockaddr*)&localHost_6,
+                            (struct socket_addr*)&localHost_6,
                             NULL,
                             ICE_TRANS_UDP,
                             ICE_CAND_TYPE_HOST, 0xffff);
@@ -2103,7 +2103,7 @@ CTEST(icelib_ce, formPairs_IPv6)
   ICELIB_fillLocalCandidate(cand,
                             1,
                             5,
-                            (struct sockaddr*)&localRelay_6,
+                            (struct socket_addr*)&localRelay_6,
                             NULL,
                             ICE_TRANS_UDP,
                             ICE_CAND_TYPE_RELAY, 0xffff);
@@ -2121,7 +2121,7 @@ CTEST(icelib_ce, formPairs_IPv6)
                              "TJA",
                              3,
                              2130706431,
-                             (struct sockaddr*)&remoteHost_6,
+                             (struct socket_addr*)&remoteHost_6,
                              ICE_TRANS_UDP,
                              ICE_CAND_TYPE_HOST);
   RemoteMediaStream.numberOfCandidates++;
@@ -2133,7 +2133,7 @@ CTEST(icelib_ce, formPairs_IPv6)
                              "TJA",
                              3,
                              30706431,
-                             (struct sockaddr*)&remoteRelay_6,
+                             (struct socket_addr*)&remoteRelay_6,
                              ICE_TRANS_UDP,
                              ICE_CAND_TYPE_RELAY);
   RemoteMediaStream.numberOfCandidates++;
@@ -2153,43 +2153,43 @@ CTEST(icelib_ce, formPairs_IPv6)
 
   /* Check pair 0 */
   ASSERT_TRUE( CheckList.checkListPairs[0].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[0
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[0
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localHost_6 ) );
+                                  (struct socket_addr*)&localHost_6 ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[0
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[0
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteHost_6 ) );
+                                  (struct socket_addr*)&remoteHost_6 ) );
 
   /* Check pair 1 */
   ASSERT_TRUE( CheckList.checkListPairs[1].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[1
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[1
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localHost_6 ) );
+                                  (struct socket_addr*)&localHost_6 ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[1
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[1
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteRelay_6 ) );
+                                  (struct socket_addr*)&remoteRelay_6 ) );
 
   /* Check pair 2 */
   ASSERT_TRUE( CheckList.checkListPairs[2].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[2
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[2
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localRelay_6 ) );
+                                  (struct socket_addr*)&localRelay_6 ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[2
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[2
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteHost_6 ) );
+                                  (struct socket_addr*)&remoteHost_6 ) );
 
   /* Check pair 3 */
   ASSERT_TRUE( CheckList.checkListPairs[3].pairState == ICELIB_PAIR_PAIRED);
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[3
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[3
                                   ].pLocalCandidate->connectionAddr,
-                                  (struct sockaddr*)&localRelay_6 ) );
+                                  (struct socket_addr*)&localRelay_6 ) );
 
-  ASSERT_TRUE( sockaddr_sameAddr( (struct sockaddr*)&CheckList.checkListPairs[3
+  ASSERT_TRUE( sockaddr_sameAddr( (struct socket_addr*)&CheckList.checkListPairs[3
                                   ].pRemoteCandidate->connectionAddr,
-                                  (struct sockaddr*)&remoteRelay_6 ) );
+                                  (struct socket_addr*)&remoteRelay_6 ) );
 
   /* ICELIB_checkListDump(&CheckList); */
   /* fflush(stdout); */

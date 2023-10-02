@@ -9,6 +9,7 @@
 
 #include "xnet.h"
 #include "icelibtypes.h"
+#include "macro.h"
 
 #include <stdint.h>
 
@@ -39,9 +40,9 @@ typedef ICELIB_Result (* ICELIB_outgoingBindingRequest)(void*
                                                         int
                                                         proto,
                                                         int socket,
-                                                        const struct sockaddr*
+                                                        const struct socket_addr*
                                                         destination,
-                                                        const struct sockaddr*
+                                                        const struct socket_addr*
                                                         source,
                                                         uint32_t
                                                         userValue1,
@@ -83,11 +84,11 @@ typedef ICELIB_Result (* ICELIB_outgoingBindingResponse)(void*
                                                          sockfd,
                                                          int
                                                          proto,
-                                                         const struct sockaddr*
+                                                         const struct socket_addr*
                                                          source,
-                                                         const struct sockaddr*
+                                                         const struct socket_addr*
                                                          destination,
-                                                         const struct sockaddr*
+                                                         const struct socket_addr*
                                                          MappedAddress,
                                                          uint16_t
                                                          errorResponse,
@@ -117,8 +118,8 @@ typedef ICELIB_Result (* ICELIB_nominated)(void*                  pUserData,
                                            uint32_t               componentId,
                                            uint64_t               priority,
                                            int32_t                proto,
-                                           const struct sockaddr* local,
-                                           const struct sockaddr* remote);
+                                           const struct socket_addr* local,
+                                           const struct socket_addr* remote);
 
 /*  */
 /* ----- Callback used to generate keepalives */
@@ -262,13 +263,11 @@ typedef struct tag_ICELIB_INSTANCE {
 
 
 
-void
-ICELIB_logString(const ICELIB_CALLBACK_LOG* pCallbackLog,
+FUNC_DECL void ICELIB_logString(const ICELIB_CALLBACK_LOG* pCallbackLog,
                  ICELIB_logLevel            logLevel,
                  const char*                str);
 
-void
-  FORMAT_CHECK(3,
+FUNC_DECL void FORMAT_CHECK(3,
                4) ICELIB_logVaString(const ICELIB_CALLBACK_LOG * pCallbackLog,
                                      ICELIB_logLevel logLevel,
                                      const char* fmt,
@@ -278,20 +277,14 @@ void
 /*  */
 /* ----- TEST API Functions */
 /*  */
-void
-ICELIB_timerConstructor(ICELIB_TIMER* timer,
+FUNC_DECL void ICELIB_timerConstructor(ICELIB_TIMER* timer,
                         unsigned int  tickIntervalMS);
-void
-ICELIB_timerStart(ICELIB_TIMER* timer,
+FUNC_DECL void ICELIB_timerStart(ICELIB_TIMER* timer,
                   unsigned int  timeoutMS);
-void
-ICELIB_timerStop(ICELIB_TIMER* timer);
-void
-ICELIB_timerTick(ICELIB_TIMER* timer);
-bool
-ICELIB_timerIsRunning(const ICELIB_TIMER* timer);
-bool
-ICELIB_timerIsTimedOut(const ICELIB_TIMER* timer);
+FUNC_DECL void ICELIB_timerStop(ICELIB_TIMER* timer);
+FUNC_DECL void ICELIB_timerTick(ICELIB_TIMER* timer);
+FUNC_DECL bool ICELIB_timerIsRunning(const ICELIB_TIMER* timer);
+FUNC_DECL bool ICELIB_timerIsTimedOut(const ICELIB_TIMER* timer);
 
 
 /* -----------------------------------------------------------------------------
@@ -301,88 +294,71 @@ ICELIB_timerIsTimedOut(const ICELIB_TIMER* timer);
 /*  */
 
 
-void
-ICELIB_Constructor(ICELIB_INSTANCE*            pInstance,
+FUNC_DECL void ICELIB_Constructor(ICELIB_INSTANCE*            pInstance,
                    const ICELIB_CONFIGURATION* pConfiguration);
-void
-ICELIB_Destructor (ICELIB_INSTANCE* pInstance);
+FUNC_DECL void ICELIB_Destructor (ICELIB_INSTANCE* pInstance);
 
-bool
-ICELIB_Start(ICELIB_INSTANCE* pInstance,
+FUNC_DECL bool ICELIB_Start(ICELIB_INSTANCE* pInstance,
              bool             controlling);
-void
-ICELIB_Stop(ICELIB_INSTANCE* pInstance);
+FUNC_DECL void ICELIB_Stop(ICELIB_INSTANCE* pInstance);
 
-void
-ICELIB_ReStart(ICELIB_INSTANCE* pInstance);
+FUNC_DECL void ICELIB_ReStart(ICELIB_INSTANCE* pInstance);
 
-void
-ICELIB_Tick(ICELIB_INSTANCE* pInstance);
+FUNC_DECL void ICELIB_Tick(ICELIB_INSTANCE* pInstance);
 
-void
-ICELIB_setCallbackConnecitivityChecksComplete(
+FUNC_DECL void ICELIB_setCallbackConnecitivityChecksComplete(
   ICELIB_INSTANCE*                  pInstance,
   ICELIB_connectivityChecksComplete pICELIB_connectivityChecksComplete,
   void*                             userData);
 
-void
-ICELIB_setCallbackNominated(ICELIB_INSTANCE* pInstance,
+FUNC_DECL void ICELIB_setCallbackNominated(ICELIB_INSTANCE* pInstance,
                             ICELIB_nominated pICELIB_nominated,
                             void*            userData);
-void
-ICELIB_setCallbackOutgoingBindingRequest(
+FUNC_DECL void ICELIB_setCallbackOutgoingBindingRequest(
   ICELIB_INSTANCE*              pInstance,
   ICELIB_outgoingBindingRequest pICELIB_sendBindingRequest,
   void*                         pBindingRequestUserData);
 
-void
-ICELIB_setCallbackOutgoingBindingResponse(
+FUNC_DECL void ICELIB_setCallbackOutgoingBindingResponse(
   ICELIB_INSTANCE*               pInstance,
   ICELIB_outgoingBindingResponse pICELIB_sendBindingResponse,
   void*                          pBindingResponseUserData);
 
-void
-ICELIB_setCallbackOutgoingCancelRequest(ICELIB_INSTANCE*             pInstance,
+FUNC_DECL void ICELIB_setCallbackOutgoingCancelRequest(ICELIB_INSTANCE*             pInstance,
                                         ICELIB_outgoingCancelRequest pICELIB_sendBindingCancelRequest,
                                         void*                        pCancelRequestUserData);
 
 
-void
-ICELIB_setCallbackKeepAlive(ICELIB_INSTANCE*     pInstance,
+FUNC_DECL void ICELIB_setCallbackKeepAlive(ICELIB_INSTANCE*     pInstance,
                             ICELIB_sendKeepAlive pICELIB_sendKeepAlive,
                             void*                pUserDataKeepAlive);
 
-void
-ICELIB_setCallbackPasswordUpdate(ICELIB_INSTANCE*      pInstance,
+FUNC_DECL void ICELIB_setCallbackPasswordUpdate(ICELIB_INSTANCE*      pInstance,
                                  ICELIB_passwordUpdate pICELIB_passwordUpdate,
                                  void*                 pUserDataPasswordUpdate);
 
-void
-ICELIB_setCallbackLog(ICELIB_INSTANCE*   pInstance,
+FUNC_DECL void ICELIB_setCallbackLog(ICELIB_INSTANCE*   pInstance,
                       ICELIB_logCallback pICELIB_logCallback,
                       void*              pLogUserData,
                       ICELIB_logLevel    logLevel);
 
-void
-ICELIB_incomingBindingResponse(ICELIB_INSTANCE*       pInstance,
+FUNC_DECL void ICELIB_incomingBindingResponse(ICELIB_INSTANCE*       pInstance,
                                uint16_t               errorResponse,
                                StunMsgId              transactionId,
-                               const struct sockaddr* source,                /*
+                               const struct socket_addr* source,                /*
                                                                               * From
                                                                               * response
                                                                               **/
-                               const struct sockaddr* destination,           /*
+                               const struct socket_addr* destination,           /*
                                                                               * From
                                                                               * response
                                                                               **/
-                               const struct sockaddr* mappedAddress);
+                               const struct socket_addr* mappedAddress);
 
-void
-ICELIB_incomingTimeout(ICELIB_INSTANCE* pInstance,
+FUNC_DECL void ICELIB_incomingTimeout(ICELIB_INSTANCE* pInstance,
                        StunMsgId        Transactionid);
 
-void
-ICELIB_incomingBindingRequest(ICELIB_INSTANCE*       pInstance,
+FUNC_DECL void ICELIB_incomingBindingRequest(ICELIB_INSTANCE*       pInstance,
                               uint32_t               userValue1,
                               uint32_t               userValue2,
                               const char*            pUfragPair,
@@ -394,92 +370,73 @@ ICELIB_incomingBindingRequest(ICELIB_INSTANCE*       pInstance,
                               StunMsgId              transactionId,
                               int                    sockfd,
                               int                    proto,
-                              const struct sockaddr* source,
-                              const struct sockaddr* destination,
+                              const struct socket_addr* source,
+                              const struct socket_addr* destination,
                               bool                   fromRelay,
-                              const struct sockaddr* peerAddr,
+                              const struct socket_addr* peerAddr,
                               uint16_t               componentId);
 
-ICE_TURN_STATE
-ICELIB_getTurnState(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL ICE_TURN_STATE ICELIB_getTurnState(const ICELIB_INSTANCE* pInstance,
                     uint32_t               mediaIdx);
 
-void
-ICELIB_setTurnState(ICELIB_INSTANCE* pInstance,
+FUNC_DECL void ICELIB_setTurnState(ICELIB_INSTANCE* pInstance,
                     uint32_t         mediaIdx,
                     ICE_TURN_STATE   turnState);
 
-int32_t
-ICELIB_getNumberOfLocalICEMediaLines(const ICELIB_INSTANCE* pInstance);
-int32_t
-ICELIB_getNumberOfRemoteICEMediaLines(const ICELIB_INSTANCE* pInstance);
+FUNC_DECL int32_t ICELIB_getNumberOfLocalICEMediaLines(const ICELIB_INSTANCE* pInstance);
+FUNC_DECL int32_t ICELIB_getNumberOfRemoteICEMediaLines(const ICELIB_INSTANCE* pInstance);
 
-int32_t
-ICELIB_getNumberOfLocalCandidates(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL int32_t ICELIB_getNumberOfLocalCandidates(const ICELIB_INSTANCE* pInstance,
                                   uint32_t               idx);
-int32_t
-ICELIB_getNumberOfRemoteCandidates(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL int32_t ICELIB_getNumberOfRemoteCandidates(const ICELIB_INSTANCE* pInstance,
                                    uint32_t               idx);
 
-const char*
-ICELIB_getLocalPassword(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL const char* ICELIB_getLocalPassword(const ICELIB_INSTANCE* pInstance,
                         uint32_t               idx);
 
-uint32_t
-ICELIB_getLocalComponentId(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL int32_t ICELIB_getLocalComponentId(const ICELIB_INSTANCE* pInstance,
                            uint32_t               mediaIdx,
                            uint32_t               candIdx);
 
-uint32_t
-ICELIB_getRemoteComponentId(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL int32_t  ICELIB_getRemoteComponentId(const ICELIB_INSTANCE* pInstance,
                             uint32_t               mediaIdx,
                             uint32_t               candIdx);
 
-struct sockaddr const*
-ICELIB_getLocalConnectionAddr(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL struct socket_addr const* ICELIB_getLocalConnectionAddr(const ICELIB_INSTANCE* pInstance,
                               uint32_t               mediaIdx,
                               uint32_t               candIdx);
 
-struct sockaddr const*
-ICELIB_getRemoteConnectionAddr(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL struct socket_addr const* ICELIB_getRemoteConnectionAddr(const ICELIB_INSTANCE* pInstance,
                                uint32_t               mediaIdx,
                                uint32_t               candIdx);
 
-ICE_CANDIDATE_TYPE
-ICELIB_getLocalCandidateType(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL ICE_CANDIDATE_TYPE ICELIB_getLocalCandidateType(const ICELIB_INSTANCE* pInstance,
                              uint32_t               mediaIdx,
                              uint32_t               candIdx);
 
-ICE_CANDIDATE_TYPE
-ICELIB_getRemoteCandidateType(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL ICE_CANDIDATE_TYPE ICELIB_getRemoteCandidateType(const ICELIB_INSTANCE* pInstance,
                               uint32_t               mediaIdx,
                               uint32_t               candIdx);
 
-ICE_TRANSPORT
-ICELIB_getRemoteTransport(const ICELIB_INSTANCE* instance,
+FUNC_DECL ICE_TRANSPORT ICELIB_getRemoteTransport(const ICELIB_INSTANCE* instance,
                           uint32_t               mediaIdx,
                           uint32_t               candIdx);
 
-ICE_MEDIA const*
-ICELIB_getLocalIceMedia(const ICELIB_INSTANCE* pInstance);
+FUNC_DECL ICE_MEDIA const* ICELIB_getLocalIceMedia(const ICELIB_INSTANCE* pInstance);
 
-void
-ICELIB_disableMediaStream(ICELIB_INSTANCE* pInstance);
-int32_t
-ICELIB_addRemoteMediaStream(ICELIB_INSTANCE*       pInstance,
+FUNC_DECL void ICELIB_disableMediaStream(ICELIB_INSTANCE* pInstance);
+FUNC_DECL int32_t ICELIB_addRemoteMediaStream(ICELIB_INSTANCE*       pInstance,
                             const char*            ufrag,
                             const char*            pwd,
-                            const struct sockaddr* defaultAddr);
+                            const struct socket_addr* defaultAddr);
 
-int32_t
-ICELIB_setRemoteMediaStream(ICELIB_INSTANCE*       pInstance,
+FUNC_DECL int32_t ICELIB_setRemoteMediaStream(ICELIB_INSTANCE*       pInstance,
                             uint32_t               mediaIdx,
                             const char*            ufrag,
                             const char*            pwd,
-                            const struct sockaddr* defaultAddr);
+                            const struct socket_addr* defaultAddr);
 
-int32_t
-ICELIB_addRemoteCandidate(ICELIB_INSTANCE*   pInstance,
+FUNC_DECL int32_t ICELIB_addRemoteCandidate(ICELIB_INSTANCE*   pInstance,
                           uint32_t           mediaIdx,
                           const char*        foundation,
                           uint32_t           foundationLen,
@@ -490,97 +447,81 @@ ICELIB_addRemoteCandidate(ICELIB_INSTANCE*   pInstance,
                           ICE_TRANSPORT      transport,
                           ICE_CANDIDATE_TYPE candType);
 
-int32_t
-ICELIB_updateLocalMediaStreamDefaultCandidate(ICELIB_INSTANCE*   pInstance,
+FUNC_DECL int32_t ICELIB_updateLocalMediaStreamDefaultCandidate(ICELIB_INSTANCE*   pInstance,
                                               uint32_t           mediaIdx,
                                               ICE_CANDIDATE_TYPE defaultCandType);
 
-int32_t
-ICELIB_addLocalMediaStream(ICELIB_INSTANCE*   pInstance,
+FUNC_DECL int32_t ICELIB_addLocalMediaStream(ICELIB_INSTANCE*   pInstance,
                            uint32_t           userValue1,
                            uint32_t           userValue2,
                            ICE_CANDIDATE_TYPE defaultCandType);
 
-int32_t
-ICELIB_setLocalMediaStream(ICELIB_INSTANCE*   pInstance,
+FUNC_DECL int32_t ICELIB_setLocalMediaStream(ICELIB_INSTANCE*   pInstance,
                            uint32_t           mediaIdx,
                            uint32_t           userValue1,
                            uint32_t           userValue2,
                            ICE_CANDIDATE_TYPE defaultCandType);
 
-int32_t
-ICELIB_addLocalCandidate(ICELIB_INSTANCE*       pInstance,
+FUNC_DECL int32_t ICELIB_addLocalCandidate(ICELIB_INSTANCE*       pInstance,
                          uint32_t               mediaIdx,
                          uint32_t               componentId,
                          int                    socket,
-                         const struct sockaddr* connectionAddr,
-                         const struct sockaddr* relAddr,
+                         const struct socket_addr* connectionAddr,
+                         const struct socket_addr* relAddr,
                          ICE_TRANSPORT          transport,
                          ICE_CANDIDATE_TYPE     candType,
                          uint16_t               local_pref);
 
 
-bool
-ICELIB_isControlling(const ICELIB_INSTANCE* pInstance);
+FUNC_DECL bool ICELIB_isControlling(const ICELIB_INSTANCE* pInstance);
 
 
-void
-ICELIB_checkListDumpAllLog(const ICELIB_CALLBACK_LOG* pCallbackLog,
+FUNC_DECL void ICELIB_checkListDumpAllLog(const ICELIB_CALLBACK_LOG* pCallbackLog,
                            ICELIB_logLevel            logLevel,
                            const ICELIB_INSTANCE*     pInstance);
 
 
-bool
-ICELIB_isRestart(ICELIB_INSTANCE* pInstance,
+FUNC_DECL bool ICELIB_isRestart(ICELIB_INSTANCE* pInstance,
                  unsigned int     mediaIdx,
                  const char*      ufrag,
                  const char*      passwd);
 
 
-struct sockaddr const*
-ICELIB_getLocalRelayAddr(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL struct socket_addr const* ICELIB_getLocalRelayAddr(const ICELIB_INSTANCE* pInstance,
                          uint32_t               mediaIdx);
-ICE_CANDIDATE const*
-ICELIB_getLocalRelayCandidate(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL ICE_CANDIDATE const* ICELIB_getLocalRelayCandidate(const ICELIB_INSTANCE* pInstance,
                               uint32_t               mediaIdx,
                               uint32_t               componentId);
 
-struct sockaddr const*
-ICELIB_getLocalRelayAddrFromHostAddr(const ICELIB_INSTANCE* pInstance,
-                                     const struct sockaddr* hostAddr);
+FUNC_DECL struct socket_addr const* ICELIB_getLocalRelayAddrFromHostAddr(const ICELIB_INSTANCE* pInstance,
+                                     const struct socket_addr* hostAddr);
 
-ICE_CANDIDATE const*
-ICELIB_getActiveCandidate(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL ICE_CANDIDATE const* ICELIB_getActiveCandidate(const ICELIB_INSTANCE* pInstance,
                           int                    mediaLineId,
                           uint32_t               componentId);
 
-ICE_REMOTE_CANDIDATES const*
-ICELIB_getActiveRemoteCandidates(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL ICE_REMOTE_CANDIDATES const* ICELIB_getActiveRemoteCandidates(const ICELIB_INSTANCE* pInstance,
                                  int                    mediaLineId);
 
-char*
-ICELIB_getCheckListRemoteUsernamePair(char*                   dst,
+FUNC_DECL char* ICELIB_getCheckListRemoteUsernamePair(char*                   dst,
                                       int                     maxlength,
                                       const ICELIB_CHECKLIST* pCheckList,
                                       bool                    outgoing);
 
 
 
-bool
-ICELIB_isRunning(const ICELIB_INSTANCE* pInstance);
-bool
-ICELIB_isIceComplete(const ICELIB_INSTANCE* pInstance);
-bool
-ICELIB_Mangled (const ICELIB_INSTANCE* pInstance);
-bool
-ICELIB_UnsupportedByRemote (const ICELIB_INSTANCE* pInstance);
+FUNC_DECL bool ICELIB_isRunning(const ICELIB_INSTANCE* pInstance);
 
-const ICE_MEDIA_STREAM*
-ICELIB_getLocalMediaStream(const ICELIB_INSTANCE* pInstance,
+FUNC_DECL bool ICELIB_isIceComplete(const ICELIB_INSTANCE* pInstance);
+
+FUNC_DECL bool ICELIB_Mangled (const ICELIB_INSTANCE* pInstance);
+
+FUNC_DECL bool ICELIB_UnsupportedByRemote (const ICELIB_INSTANCE* pInstance);
+
+FUNC_DECL const ICE_MEDIA_STREAM* ICELIB_getLocalMediaStream(const ICELIB_INSTANCE* pInstance,
                            uint32_t               mediaIdx);
 
-void
-ICELIB_dropRflx(ICELIB_INSTANCE* pInstance);
+FUNC_DECL void ICELIB_dropRflx(ICELIB_INSTANCE* pInstance);
 
 #ifdef __cplusplus
 }

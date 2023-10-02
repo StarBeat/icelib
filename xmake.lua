@@ -19,7 +19,8 @@ target("icelib")
     
     add_packages("xnet")
     add_packages("stunlib")
-   
+    add_defines("XAPI_EXPORT")
+
     add_includedirs("include")
     add_headerfiles("include/**.h")
     add_files("src/fifo.c",
@@ -95,7 +96,6 @@ target("icelib.test.icelib_ce")
     add_packages("stunlib")
     add_packages("xnet")
     add_deps("icelib")
-    
     add_includedirs("test")
     add_includedirs("include")
     add_files("test/test_utils.c")
